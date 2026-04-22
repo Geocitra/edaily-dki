@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instruksi Pimpinan - E-Daily Report DKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // TONE WARNA DKI JAKARTA (Biru Jakarta & Kuning Emas)
+        tailwind.config = {
+            theme: { extend: { colors: { dki: { primary: '#005baa', accent: '#f59e0b', dark: '#0f172a' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        /* Standarisasi Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden font-sans relative">
+
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
+        onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="bg-white p-2.5 rounded-2xl mb-4 shadow-lg">
+                <img src="../assets/img/dki.png" alt="Logo DKI Jakarta" class="h-12 object-contain">
+            </div>
+
+            <h2 class="text-white font-black tracking-wider uppercase text-sm">E-Daily Report</h2>
+            <p class="text-dki-accent text-[10px] font-bold uppercase tracking-widest mt-1">Pimpinan / Kadis</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📊
+                Dashboard Eksekutif</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pemantauan
+                Global</div>
+            <a href="skoring-bidang.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🏆
+                Peringkat Kinerja</a>
+            <a href="peta-aktivitas-global.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🗺️
+                Peta Global (GIS)</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Komunikasi</div>
+            <a href="pengumuman.html"
+                class="flex items-center px-4 py-3 text-white bg-dki-primary/90 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all border-l-4 border-dki-accent">📢
+                Instruksi Pimpinan</a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button onclick="AuthEngine.logout()"
+                class="w-full flex justify-center items-center py-3 bg-slate-800 text-slate-300 hover:text-white hover:bg-rose-600 rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest">Keluar
+                Sistem</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+        <header
+            class="h-16 md:h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden text-slate-500 hover:text-dki-primary focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-tight truncate">Pusat
+                    Maklumat Pimpinan</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <div id="session-user-name" class="text-xs font-bold text-slate-800 uppercase">Memuat...</div>
+                </div>
+                <div
+                    class="h-10 w-10 rounded-full bg-slate-100 text-dki-primary flex items-center justify-center text-lg shadow-inner font-black border border-slate-200 flex-shrink-0">
+                    K</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 fade-in">
+
+            <div
+                class="relative w-full h-56 md:h-72 rounded-2xl md:rounded-[2rem] overflow-hidden mb-8 shadow-2xl group">
+                <div id="pengumuman-slider"
+                    class="flex w-full h-full transition-transform duration-1000 ease-in-out transform scale-105 group-hover:scale-100">
+                    <img src="../assets/img/dki-1.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                    <img src="../assets/img/dki-2.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                </div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-dki-primary/95 via-dki-dark/70 to-transparent flex items-center p-8 md:p-12">
+                    <div class="w-full max-w-3xl transform transition-transform duration-700 translate-y-0">
+                        <div
+                            class="inline-flex items-center gap-2 mb-4 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full shadow-lg">
+                            <span
+                                class="text-[10px] md:text-xs font-black tracking-widest text-amber-200 uppercase">Saluran
+                                Komunikasi Formal</span>
+                        </div>
+                        <h2
+                            class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4 drop-shadow-lg">
+                            Satu Suara <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-dki-accent">Membangun
+                                Jakarta</span>
+                        </h2>
+                        <p class="text-blue-100 text-xs md:text-sm leading-relaxed max-w-xl backdrop-blur-sm">
+                            Gunakan modul ini untuk mendistribusikan arahan strategis, maklumat, atau instruksi darurat
+                            secara instan kepada seluruh jajaran ASN atau ke Bidang spesifik.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+
+                <div class="lg:col-span-2 space-y-6">
+                    <div
+                        class="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-white p-5 rounded-3xl border border-slate-200 shadow-sm gap-4">
+                        <h3 class="font-black text-slate-800 uppercase text-xs tracking-[0.2em]">Riwayat Instruksi</h3>
+                        <select id="filter-baca"
+                            class="text-xs font-bold border border-slate-200 bg-slate-50 rounded-xl focus:ring-2 focus:ring-dki-primary px-4 py-2.5 outline-none transition-all cursor-pointer"
+                            onchange="renderPengumuman()">
+                            <option value="ALL">🌐 SEMUA PESAN INSTANSI</option>
+                            <option value="SAYA">👤 INSTRUKSI SAYA SAJA</option>
+                        </select>
+                    </div>
+
+                    <div id="pengumuman-container" class="space-y-5">
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-xl sticky top-0">
+                        <div class="absolute top-0 left-0 w-full h-1.5 bg-dki-primary"></div>
+                        <h3
+                            class="font-black text-slate-800 uppercase text-sm mb-6 border-b pb-4 border-slate-100 tracking-tight">
+                            Buat Instruksi Baru</h3>
+
+                        <form onsubmit="kirimInstruksi(event)" class="space-y-5">
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Target
+                                    Distribusi</label>
+                                <select id="p_target"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all appearance-none cursor-pointer"
+                                    required>
+                                    <option value="ALL">🌐 SELURUH DINAS (GLOBAL)</option>
+                                    <optgroup label="Instruksi Spesifik Bidang" id="optgroup-bidang"></optgroup>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Tingkat
+                                    Prioritas</label>
+                                <select id="p_tipe"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all appearance-none cursor-pointer"
+                                    required>
+                                    <option value="INFO">ℹ️ INFORMASI UMUM</option>
+                                    <option value="URGENT">🚨 SANGAT PENTING / SEGERA</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Subjek
+                                    Maklumat</label>
+                                <input type="text" id="p_judul"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all placeholder-slate-400"
+                                    placeholder="Contoh: Rapat Koordinasi..." required>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Isi
+                                    Instruksi</label>
+                                <textarea id="p_pesan" rows="5"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-700 focus:ring-2 focus:ring-dki-primary outline-none transition-all placeholder-slate-400 resize-none"
+                                    placeholder="Uraikan detail instruksi pimpinan di sini..." required></textarea>
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit"
+                                    class="w-full bg-dki-primary hover:bg-blue-800 text-white font-black py-4 rounded-xl transition-all shadow-lg shadow-blue-200 text-xs uppercase tracking-widest active:scale-95">
+                                    Terbitkan Maklumat
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/db-mock.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = AuthEngine.getCurrentUser();
+            if (document.getElementById('session-user-name')) {
+                document.getElementById('session-user-name').innerText = currentUser.name;
+            }
+
+            // Banner Slider Logic
+            let slideIdx = 0;
+            const slider = document.getElementById('pengumuman-slider');
+            setInterval(() => {
+                slideIdx = (slideIdx + 1) % 2;
+                slider.style.transform = `translateX(-${slideIdx * 100}%)`;
+            }, 6000);
+
+            // Populate Dropdown Bidang
+            const dbData = MockDB._getData();
+            const optgroup = document.getElementById('optgroup-bidang');
+            dbData.bidang.filter(b => b.id !== 'B00').forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b.id;
+                opt.innerText = `🏢 BIDANG: ${b.nama.toUpperCase()}`;
+                optgroup.appendChild(opt);
+            });
+
+            renderPengumuman();
+        });
+
+        function renderPengumuman() {
+            const currentUser = AuthEngine.getCurrentUser();
+            const dbData = MockDB._getData();
+            const filter = document.getElementById('filter-baca').value;
+
+            let msgs = filter === 'SAYA' ? dbData.pengumuman.filter(p => p.sender_id === currentUser.id) : dbData.pengumuman;
+            msgs.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+            const container = document.getElementById('pengumuman-container');
+            if (msgs.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-12 flex flex-col items-center justify-center rounded-3xl border border-slate-200 text-center shadow-sm">
+                        <span class="text-4xl mb-4 opacity-50">📭</span>
+                        <p class="text-slate-400 text-xs font-black uppercase tracking-widest">Belum ada maklumat / komunikasi tercatat.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = msgs.map(p => {
+                const sender = MockDB.getUserById(p.sender_id);
+                const isUrgent = p.tipe === 'URGENT';
+
+                const borderClass = isUrgent ? 'border-rose-200 bg-rose-50/30' : 'border-slate-200 bg-white';
+                const iconClass = isUrgent ? 'bg-gradient-to-br from-rose-400 to-rose-600 shadow-rose-200' : 'bg-gradient-to-br from-blue-500 to-dki-primary shadow-blue-200';
+                const badgeClass = p.target_bidang === 'ALL' ? 'border-emerald-200 text-emerald-700 bg-emerald-50' : 'border-blue-200 text-blue-700 bg-blue-50';
+
+                const dateObj = new Date(p.tanggal);
+                const timeString = `${dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} ${dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+
+                return `
+                    <div class="p-6 rounded-3xl border ${borderClass} shadow-sm relative overflow-hidden transition-all hover:shadow-md">
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="flex gap-4 items-center">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg ${iconClass} flex-shrink-0 text-xl">
+                                    ${isUrgent ? '🚨' : '📢'}
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-slate-800 uppercase tracking-tight text-sm md:text-base leading-tight">${p.judul}</h4>
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1.5 flex items-center gap-2">
+                                        <span class="text-slate-700">${sender ? sender.name : 'Sistem'}</span> 
+                                        <span class="opacity-50">•</span> 
+                                        <span>${timeString}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${badgeClass} whitespace-nowrap">
+                                ${p.target_bidang === 'ALL' ? 'Global Instansi' : 'Spesifik Bidang'}
+                            </span>
+                        </div>
+                        <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap ml-0 sm:ml-16 bg-white/50 p-4 rounded-xl border border-slate-100">${p.pesan}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function kirimInstruksi(e) {
+            e.preventDefault();
+            const dbData = MockDB._getData();
+            const newMsg = {
+                id: "P" + Date.now(),
+                sender_id: AuthEngine.getCurrentUser().id,
+                target_bidang: document.getElementById('p_target').value,
+                tipe: document.getElementById('p_tipe').value,
+                judul: document.getElementById('p_judul').value.trim(),
+                pesan: document.getElementById('p_pesan').value.trim(),
+                tanggal: new Date().toISOString()
+            };
+
+            dbData.pengumuman.push(newMsg);
+            MockDB._saveData(dbData);
+            MockDB.insertLog(newMsg.sender_id, 'BROADCAST', `Menerbitkan instruksi pimpinan: ${newMsg.judul}`);
+
+            alert('Sukses: Instruksi berhasil disebarkan ke jaringan sistem!');
+            e.target.reset();
+
+            document.getElementById('filter-baca').value = 'ALL';
+            renderPengumuman();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instruksi Tim - E-Daily Report DKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // TONE WARNA DKI JAKARTA (Biru Jakarta & Kuning Emas)
+        tailwind.config = {
+            theme: { extend: { colors: { dki: { primary: '#005baa', accent: '#f59e0b', dark: '#0f172a' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        /* Standarisasi Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden font-sans relative">
+
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
+        onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="bg-white p-2.5 rounded-2xl mb-4 shadow-lg">
+                <img src="../assets/img/dki.png" alt="Logo DKI Jakarta" class="h-12 object-contain">
+            </div>
+
+            <h2 class="text-white font-black tracking-wider uppercase text-sm">E-Daily Report</h2>
+            <p class="text-dki-accent text-[10px] font-bold uppercase tracking-widest mt-1">Pejabat Penilai</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📊
+                Dashboard Tim</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Manajemen Tim
+            </div>
+            <a href="validasi-lkh.html"
+                class="flex items-center justify-between px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">
+                <span>✔️ Validasi Bawahan</span>
+                <span id="nav-badge-antrean"
+                    class="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden animate-pulse">0</span>
+            </a>
+            <a href="skoring-kinerja.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📉
+                Skoring Tim</a>
+            <a href="peta-aktivitas-tim.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🗺️
+                Peta Tim (GIS)</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kinerja Pribadi
+            </div>
+            <a href="input-skp.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🎯
+                Target SKP</a>
+            <a href="input-lkh.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">✍️
+                Input LKH</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Info</div>
+
+            <a href="pengumuman.html"
+                class="flex items-center px-4 py-3 text-white bg-dki-primary/90 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all border-l-4 border-dki-accent">📢
+                Instruksi Tim</a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button onclick="AuthEngine.logout()"
+                class="w-full flex justify-center items-center py-3 bg-slate-800 text-slate-300 hover:text-white hover:bg-rose-600 rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest">Keluar
+                Sistem</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+        <header
+            class="h-16 md:h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden text-slate-500 hover:text-dki-primary focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-tight truncate">Pusat
+                    Komunikasi & Instruksi</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <div id="session-user-name" class="text-xs font-bold text-slate-800 uppercase">Memuat...</div>
+                    <div class="text-[10px] font-bold text-dki-primary uppercase tracking-widest">Penilai</div>
+                </div>
+                <div
+                    class="h-10 w-10 rounded-full bg-slate-100 text-dki-primary flex items-center justify-center text-lg shadow-inner font-black border border-slate-200 flex-shrink-0">
+                    📢</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 fade-in custom-scrollbar">
+
+            <div
+                class="relative w-full h-48 md:h-56 rounded-2xl md:rounded-[2rem] overflow-hidden mb-8 shadow-2xl group border-4 border-white max-w-6xl mx-auto">
+                <div
+                    class="absolute inset-0 flex transition-transform duration-1000 ease-in-out transform scale-105 group-hover:scale-100">
+                    <img src="../assets/img/dki-1.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                </div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-dki-primary/95 via-dki-dark/70 to-transparent flex items-center p-6 md:p-10">
+                    <div class="w-full max-w-2xl transform transition-transform duration-700 translate-y-0">
+                        <div
+                            class="inline-flex items-center gap-2 mb-3 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full shadow-lg">
+                            <span class="text-[10px] font-black tracking-widest text-emerald-300 uppercase">Informasi
+                                Organisasi</span>
+                        </div>
+                        <h2
+                            class="text-2xl md:text-4xl font-black text-white tracking-tight leading-tight mb-2 drop-shadow-lg">
+                            Komunikasi <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-400">Internal
+                                Tim</span>
+                        </h2>
+                        <p
+                            class="text-blue-100 text-xs md:text-sm leading-relaxed max-w-lg backdrop-blur-sm hidden sm:block">
+                            Pantau arahan dari pimpinan pusat (Kadis) dan sebarkan instruksi spesifik kepada anggota
+                            tim/bawahan di unit kerja Anda.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+
+                <div class="lg:col-span-2 space-y-5" id="pengumuman-container">
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div
+                        class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-xl sticky top-0 relative overflow-hidden">
+                        <div
+                            class="absolute top-0 right-0 p-6 bg-slate-50 opacity-40 text-6xl pointer-events-none transform translate-x-4 -translate-y-4">
+                            📨</div>
+                        <div class="absolute top-0 left-0 w-full h-1.5 bg-dki-accent"></div>
+
+                        <h3 class="text-lg font-black text-slate-800 uppercase mb-1 tracking-tighter relative z-10">
+                            Siarkan Instruksi</h3>
+                        <p
+                            class="text-[10px] text-slate-400 font-bold mb-6 uppercase tracking-widest border-b border-slate-100 pb-4 relative z-10">
+                            Target: Anggota Tim Bidang Anda</p>
+
+                        <form onsubmit="kirimPengumuman(event)" class="space-y-5 relative z-10">
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Tingkat
+                                    Prioritas</label>
+                                <select id="p_tipe"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-accent outline-none appearance-none cursor-pointer"
+                                    required>
+                                    <option value="INFO">ℹ️ INFORMASI BIASA</option>
+                                    <option value="URGENT">🚨 INSTRUKSI MENDESAK</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Subjek
+                                    Perihal</label>
+                                <input type="text" id="p_judul"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-accent outline-none transition-all placeholder-slate-400"
+                                    placeholder="Perihal instruksi..." required>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Isi
+                                    Perintah</label>
+                                <textarea id="p_pesan" rows="5"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-700 focus:ring-2 focus:ring-dki-accent outline-none transition-all resize-none placeholder-slate-400"
+                                    placeholder="Tulis rincian instruksi tim..." required></textarea>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit"
+                                    class="w-full bg-dki-accent hover:bg-orange-600 text-white font-black py-4 rounded-xl shadow-lg shadow-orange-200 uppercase tracking-widest text-[11px] transition-all active:scale-95 flex items-center justify-center gap-2">
+                                    <span>📢</span> Kirim Instruksi Tim
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/db-mock.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = AuthEngine.getCurrentUser();
+            if (document.getElementById('session-user-name')) {
+                document.getElementById('session-user-name').innerText = user.name;
+            }
+
+            // Render Notification Badge for Review
+            const pendingLkh = MockDB.getLkhForReview(user.id);
+            if (pendingLkh.length > 0) {
+                const badge = document.getElementById('nav-badge-antrean');
+                badge.classList.remove('hidden');
+                badge.innerText = pendingLkh.length;
+            }
+
+            renderPengumuman();
+        });
+
+        function renderPengumuman() {
+            const user = AuthEngine.getCurrentUser();
+            // Penilai melihat pengumuman Global (ALL) dan Pengumuman spesifik bidangnya
+            const msgs = MockDB._getData().pengumuman.filter(p => p.target_bidang === 'ALL' || p.target_bidang === user.bidang_id)
+                .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+            const container = document.getElementById('pengumuman-container');
+
+            if (msgs.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-12 flex flex-col items-center justify-center rounded-3xl border border-slate-200 text-center shadow-sm">
+                        <span class="text-4xl mb-4 opacity-50">📭</span>
+                        <p class="text-slate-400 text-xs font-black uppercase tracking-widest">Belum ada instruksi atau pengumuman masuk.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = msgs.map(p => {
+                const isUrgent = p.tipe === 'URGENT';
+                const sender = MockDB.getUserById(p.sender_id);
+
+                const borderClass = isUrgent ? 'border-rose-200 bg-rose-50/30' : 'border-slate-200 bg-white';
+                const iconClass = isUrgent ? 'bg-gradient-to-br from-rose-400 to-rose-600 shadow-rose-200' : 'bg-gradient-to-br from-blue-500 to-dki-primary shadow-blue-200';
+                const badgeClass = p.target_bidang === 'ALL' ? 'border-emerald-200 text-emerald-700 bg-emerald-50' : 'border-amber-200 text-amber-700 bg-amber-50';
+
+                const dateObj = new Date(p.tanggal);
+                const timeString = `${dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} ${dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+
+                return `
+                    <div class="p-6 rounded-3xl border ${borderClass} shadow-sm relative overflow-hidden transition-all hover:shadow-md">
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="flex gap-4 items-center">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg ${iconClass} flex-shrink-0 text-xl">
+                                    ${isUrgent ? '🚨' : '📢'}
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-slate-800 uppercase tracking-tight text-sm md:text-base leading-tight">${p.judul}</h4>
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1.5 flex items-center gap-2">
+                                        <span class="text-slate-700">${sender ? sender.name : 'System'}</span> 
+                                        <span class="opacity-50">•</span> 
+                                        <span>${timeString}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${badgeClass} whitespace-nowrap">
+                                ${p.target_bidang === 'ALL' ? 'Dinas Global' : 'Internal Tim'}
+                            </span>
+                        </div>
+                        <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap ml-0 sm:ml-16 bg-white/50 p-4 rounded-xl border border-slate-100">${p.pesan}</div>
+                    </div>`;
+            }).join('');
+        }
+
+        function kirimPengumuman(e) {
+            e.preventDefault();
+            const user = AuthEngine.getCurrentUser();
+            const db = MockDB._getData();
+
+            // Penilai broadcast ke internal bidangnya
+            const newMsg = {
+                id: "P" + Date.now(),
+                sender_id: user.id,
+                target_bidang: user.bidang_id,
+                tipe: document.getElementById('p_tipe').value,
+                judul: document.getElementById('p_judul').value.trim(),
+                pesan: document.getElementById('p_pesan').value.trim(),
+                tanggal: new Date().toISOString()
+            };
+
+            db.pengumuman.push(newMsg);
+            MockDB._saveData(db);
+
+            MockDB.insertLog(user.id, 'TEAM_INSTRUCTION', `Broadcast Instruksi ke Tim/Bidang ${user.bidang_id}`);
+            alert('Sukses: Instruksi berhasil dikirim ke anggota tim Anda!');
+
+            e.target.reset();
+            renderPengumuman();
+        }
+    </script>
+</body>
+
+</html>

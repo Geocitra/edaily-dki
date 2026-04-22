@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar Global - E-Daily Report DKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // TONE WARNA DKI JAKARTA (Biru Jakarta & Kuning Emas)
+        tailwind.config = {
+            theme: { extend: { colors: { dki: { primary: '#005baa', accent: '#f59e0b', dark: '#0f172a' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        /* Standarisasi Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        /* Map Responsive Fix: Mengatur tinggi peta saat di layar mobile */
+        @media (max-width: 1024px) {
+            .map-container {
+                height: 450px;
+                flex-shrink: 0;
+                border-top: 2px solid #e2e8f0;
+            }
+
+            .list-container {
+                max-height: 45vh;
+            }
+        }
+
+        .leaflet-container {
+            font-family: inherit !important;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden font-sans relative">
+
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
+        onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="bg-white p-2.5 rounded-2xl mb-4 shadow-lg">
+                <img src="../assets/img/dki.png" alt="Logo DKI Jakarta" class="h-12 object-contain">
+            </div>
+
+            <h2 class="text-white font-black tracking-wider uppercase text-sm">E-Daily Report</h2>
+            <p class="text-dki-accent text-[10px] font-bold uppercase tracking-widest mt-1">Pimpinan / Kadis</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📊
+                Dashboard Eksekutif</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pemantauan
+                Global</div>
+            <a href="skoring-bidang.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🏆
+                Peringkat Kinerja</a>
+
+            <a href="peta-aktivitas-global.html"
+                class="flex items-center px-4 py-3 text-white bg-dki-primary/90 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all border-l-4 border-dki-accent">🗺️
+                Peta Global (GIS)</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Komunikasi</div>
+            <a href="pengumuman.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📢
+                Instruksi Pimpinan</a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button onclick="AuthEngine.logout()"
+                class="w-full flex justify-center items-center py-3 bg-white/5 hover:bg-rose-500 text-white rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest border border-white/10 hover:border-rose-500">Keluar
+                Sistem</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+
+        <header
+            class="h-16 md:h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 z-20 shadow-sm shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden p-2 bg-slate-100 rounded-lg text-slate-500 hover:text-dki-primary focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div>
+                    <h1 class="text-lg md:text-xl font-black text-dki-dark uppercase tracking-tight">Radar Spasial
+                        Bapenda</h1>
+                    <p class="hidden md:block text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                        Live Tracking Koordinat LKH</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <select id="filter-bidang"
+                    class="bg-slate-50 border border-slate-200 rounded-full px-4 md:px-6 py-2 text-[10px] font-black text-slate-700 uppercase tracking-widest outline-none focus:ring-2 focus:ring-dki-primary max-w-[140px] md:max-w-none truncate cursor-pointer"
+                    onchange="renderMap()">
+                    <option value="ALL">🌐 SEMUA BIDANG (GLOBAL)</option>
+                </select>
+                <div
+                    class="hidden sm:flex h-10 w-10 rounded-full bg-slate-100 text-dki-primary items-center justify-center text-lg shadow-inner font-black border border-slate-200 shrink-0">
+                    K</div>
+            </div>
+        </header>
+
+        <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative bg-slate-100">
+
+            <div
+                class="w-full lg:w-80 xl:w-96 bg-white border-r border-slate-200 flex flex-col z-10 shadow-2xl shrink-0 list-container">
+
+                <div class="relative h-32 md:h-40 overflow-hidden shrink-0 bg-dki-dark">
+                    <div id="banner-slider"
+                        class="absolute inset-0 flex transition-transform duration-[1.5s] ease-in-out">
+                        <img src="../assets/img/dki-2.png" class="w-full h-full object-cover brightness-[0.3]" alt="">
+                        <img src="../assets/img/dki-1.png" class="w-full h-full object-cover brightness-[0.3]" alt="">
+                        <img src="../assets/img/dki-3.png" class="w-full h-full object-cover brightness-[0.3]" alt="">
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-dki-dark/95 to-transparent flex flex-col justify-end p-5">
+                        <h4 class="text-white text-xs font-black uppercase tracking-widest">Titik Sebaran LKH</h4>
+                        <div class="flex gap-1 mt-2">
+                            <div class="h-1 w-4 rounded-full bg-dki-accent" id="b-dot-0"></div>
+                            <div class="h-1 w-1.5 rounded-full bg-white/30" id="b-dot-1"></div>
+                            <div class="h-1 w-1.5 rounded-full bg-white/30" id="b-dot-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slate-50 border-b border-slate-200 shrink-0">
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="bg-white p-2 rounded-lg border border-slate-200 text-center shadow-sm">
+                            <span
+                                class="block text-[9px] font-black text-dki-primary uppercase tracking-widest">WFO</span>
+                            <span class="block text-lg font-black text-slate-800" id="count-wfo">0</span>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-slate-200 text-center shadow-sm">
+                            <span
+                                class="block text-[9px] font-black text-emerald-600 uppercase tracking-widest">WFH</span>
+                            <span class="block text-lg font-black text-slate-800" id="count-wfh">0</span>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-slate-200 text-center shadow-sm">
+                            <span
+                                class="block text-[9px] font-black text-rose-600 uppercase tracking-widest">Luar</span>
+                            <span class="block text-lg font-black text-slate-800" id="count-luar">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="list-global-log" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50 custom-scrollbar">
+                </div>
+            </div>
+
+            <div id="map" class="flex-1 z-0 map-container"></div>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../assets/js/db-mock.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        let map, markersGroup;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = AuthEngine.getCurrentUser();
+            if (document.getElementById('session-user-name')) {
+                document.getElementById('session-user-name').innerText = currentUser.name;
+            }
+
+            // Slider Logic (Mini Banner)
+            let slideIdx = 0;
+            const slider = document.getElementById('banner-slider');
+            const dots = [document.getElementById('b-dot-0'), document.getElementById('b-dot-1'), document.getElementById('b-dot-2')];
+            setInterval(() => {
+                slideIdx = (slideIdx + 1) % 3;
+                slider.style.transform = `translateX(-${slideIdx * 100}%)`;
+                dots.forEach((dot, index) => {
+                    if (index === slideIdx) {
+                        dot.classList.replace('w-1.5', 'w-4');
+                        dot.classList.replace('bg-white/30', 'bg-dki-accent');
+                    } else {
+                        dot.classList.replace('w-4', 'w-1.5');
+                        dot.classList.replace('bg-dki-accent', 'bg-white/30');
+                    }
+                });
+            }, 5000);
+
+            // Populate Filter Bidang
+            const dbData = MockDB._getData();
+            const select = document.getElementById('filter-bidang');
+            dbData.bidang.filter(b => b.id !== 'B00').forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b.id; opt.innerText = `🏢 BIDANG: ${b.nama.toUpperCase()}`;
+                select.appendChild(opt);
+            });
+
+            initMap();
+            renderMap();
+        });
+
+        function initMap() {
+            map = L.map('map', { zoomControl: false }).setView([-6.2088, 106.8456], 12);
+            // Menggunakan basemap bersih agar titik koordinat lebih menonjol
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+            markersGroup = L.layerGroup().addTo(map);
+        }
+
+        function renderMap() {
+            markersGroup.clearLayers();
+            const dbData = MockDB._getData();
+            const filterId = document.getElementById('filter-bidang').value;
+            const lkhs = MockDB.getLkh();
+
+            let counts = { WFO: 0, WFH: 0, LUAR: 0 };
+            const sidebar = document.getElementById('list-global-log');
+            sidebar.innerHTML = '';
+            let bounds = [];
+
+            lkhs.forEach(l => {
+                const user = dbData.users.find(u => u.id === l.user_id);
+                if (!user || (filterId !== 'ALL' && user.bidang_id !== filterId)) return;
+                if (!l.lat || !l.lng) return;
+
+                counts[l.lokasi_mode]++;
+
+                // Warna marker mengikuti palet warna yang sudah ditetapkan
+                let markerColor = '#005baa'; // WFO: DKI Primary
+                if (l.lokasi_mode === 'WFH') markerColor = '#10b981'; // WFH: Emerald
+                if (l.lokasi_mode === 'LUAR') markerColor = '#e11d48'; // LUAR: Rose
+
+                const customIcon = L.divIcon({
+                    html: `
+                        <div class="relative flex items-center justify-center">
+                            <div class="absolute w-5 h-5 rounded-full animate-ping opacity-60" style="background:${markerColor}"></div>
+                            <div class="w-3.5 h-3.5 rounded-full border-2 border-white shadow-xl relative z-10" style="background:${markerColor}"></div>
+                        </div>`,
+                    className: '', iconSize: [20, 20]
+                });
+
+                const marker = L.marker([l.lat, l.lng], { icon: customIcon }).addTo(markersGroup);
+
+                const dateObj = new Date(l.tanggal);
+                const tglStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) + ' • ' + dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+                // Map Popup
+                marker.bindPopup(`
+                    <div class="font-sans p-1 min-w-[180px]">
+                        <p class="font-black text-slate-800 uppercase tracking-tight border-b border-slate-100 pb-2 mb-2">${user.name}</p>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase text-white tracking-widest" style="background:${markerColor}">${l.lokasi_mode}</span>
+                            <span class="text-[9px] font-bold text-slate-400">${tglStr}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600 leading-snug italic mt-2 line-clamp-3">"${l.aktivitas}"</p>
+                    </div>
+                `);
+
+                bounds.push([l.lat, l.lng]);
+
+                // Render Card Info di Sidebar Kiri
+                const card = document.createElement('div');
+                card.className = "p-4 bg-white rounded-2xl border border-slate-100 hover:border-dki-primary cursor-pointer transition-all shadow-sm hover:shadow-md group relative";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-black text-slate-800 uppercase truncate pr-2 group-hover:text-dki-primary transition-colors">${user.name}</span>
+                        <div class="w-2.5 h-2.5 rounded-full shadow-sm flex-shrink-0" style="background:${markerColor}"></div>
+                    </div>
+                    <p class="text-[11px] text-slate-600 line-clamp-2 leading-relaxed italic mb-3">"${l.aktivitas}"</p>
+                    <div class="flex items-center justify-between border-t border-slate-50 pt-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest" style="color:${markerColor}">📍 ${l.lokasi_mode}</span>
+                        <span class="text-[9px] font-bold text-slate-400">${dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                `;
+
+                // Event saat Card diklik (Pusatkan peta)
+                card.onclick = () => {
+                    if (window.innerWidth < 1024) toggleSidebar();
+                    map.flyTo([l.lat, l.lng], 16, { duration: 1.5 });
+                    marker.openPopup();
+                };
+                sidebar.appendChild(card);
+            });
+
+            // Handling jika tidak ada data sama sekali
+            if (sidebar.innerHTML === '') {
+                sidebar.innerHTML = `
+                    <div class="p-8 text-center flex flex-col items-center justify-center h-full text-slate-400">
+                        <span class="text-3xl mb-3">📍</span>
+                        <p class="font-bold uppercase text-[10px] tracking-widest leading-loose">Tidak ada data spasial<br>untuk kriteria ini.</p>
+                    </div>`;
+            }
+
+            document.getElementById('count-wfo').innerText = counts.WFO;
+            document.getElementById('count-wfh').innerText = counts.WFH;
+            document.getElementById('count-luar').innerText = counts.LUAR;
+
+            // Fitur zoom responsif berdasarkan jumlah marker
+            if (bounds.length > 0) {
+                map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+            } else {
+                map.setView([-6.2088, 106.8456], 12);
+            }
+        }
+    </script>
+</body>
+
+</html>

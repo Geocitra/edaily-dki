@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skoring Kinerja - E-Daily Report DKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // TONE WARNA DKI JAKARTA
+        tailwind.config = {
+            theme: { extend: { colors: { dki: { primary: '#005baa', accent: '#f59e0b', dark: '#0f172a' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        /* Standarisasi Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden font-sans relative">
+
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
+        onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="bg-white p-2.5 rounded-2xl mb-4 shadow-lg">
+                <img src="../assets/img/dki.png" alt="Logo DKI Jakarta" class="h-12 object-contain">
+            </div>
+
+            <h2 class="text-white font-black tracking-wider uppercase text-sm">E-Daily Report</h2>
+            <p class="text-dki-accent text-[10px] font-bold uppercase tracking-widest mt-1">Pejabat Penilai</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📊
+                Dashboard Tim</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Manajemen Tim
+            </div>
+            <a href="validasi-lkh.html"
+                class="flex items-center justify-between px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">
+                <span>✔️ Validasi Bawahan</span>
+                <span id="nav-badge-antrean"
+                    class="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden animate-pulse shadow-sm">0</span>
+            </a>
+
+            <a href="skoring-kinerja.html"
+                class="flex items-center px-4 py-3 text-white bg-dki-primary/90 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all border-l-4 border-dki-accent">📉
+                Skoring Tim</a>
+
+            <a href="peta-aktivitas-tim.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🗺️
+                Peta Tim (GIS)</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kinerja Pribadi
+            </div>
+            <a href="input-skp.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🎯
+                Target SKP</a>
+            <a href="input-lkh.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">✍️
+                Input LKH</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Info</div>
+            <a href="pengumuman.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📢
+                Instruksi Tim</a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button onclick="AuthEngine.logout()"
+                class="w-full flex justify-center items-center py-3 bg-slate-800 text-slate-300 hover:text-white hover:bg-rose-600 rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest border border-transparent hover:border-rose-500">Keluar
+                Sistem</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+        <header
+            class="h-16 md:h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden text-slate-500 hover:text-dki-primary focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-tight truncate">Rekapitulasi
+                    Skoring Tim</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="window.print()"
+                    class="bg-slate-50 border border-slate-200 hover:bg-slate-100 text-dki-primary px-4 md:px-6 py-2 rounded-full text-[10px] md:text-xs font-black tracking-widest uppercase transition-all shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <span class="hidden md:inline">🖨️ Cetak PDF</span>
+                    <span class="md:hidden">🖨️</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 fade-in custom-scrollbar">
+
+            <div
+                class="relative w-full h-56 md:h-72 rounded-2xl md:rounded-[2rem] overflow-hidden mb-8 shadow-2xl border-4 border-white group">
+                <div id="skoring-slider"
+                    class="flex w-full h-full transition-transform duration-1000 ease-in-out transform scale-105 group-hover:scale-100">
+                    <img src="../assets/img/dki-3.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                    <img src="../assets/img/dki-1.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                </div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-dki-dark/95 via-dki-primary/60 to-transparent flex items-center p-8 md:p-12">
+                    <div class="w-full max-w-3xl transform transition-transform duration-700 translate-y-0">
+                        <div
+                            class="inline-flex items-center gap-2 mb-4 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full shadow-lg">
+                            <span
+                                class="text-[10px] md:text-xs font-black tracking-widest text-amber-200 uppercase">Evaluasi
+                                Internal Tim</span>
+                        </div>
+                        <h2
+                            class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4 drop-shadow-lg">
+                            Leaderboard <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-400">Anggota
+                                Tim</span>
+                        </h2>
+                        <p class="text-blue-50 text-xs md:text-sm leading-relaxed max-w-xl backdrop-blur-sm">
+                            Pemantauan tingkat capaian jam kerja *APPROVED* per individu di bawah pengawasan Anda.
+                            Diukur berdasarkan rasio standar 160 Jam/Bulan per pegawai.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+                <div class="p-6 md:p-8 bg-slate-50/80 border-b border-slate-100 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-sm md:text-lg font-black tracking-tight text-slate-800 uppercase">Performa
+                            Bawahan Terkini</h2>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-2xl md:text-3xl font-black text-dki-primary" id="team-count">0</span>
+                        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Pegawai Aktif</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[700px]" id="table-skoring">
+                        <thead>
+                            <tr
+                                class="bg-white border-b border-slate-100 text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">
+                                <th class="p-6 text-center w-24">Rank</th>
+                                <th class="p-6">Nama Pegawai</th>
+                                <th class="p-6 text-center w-40">Jam Valid Approved</th>
+                                <th class="p-6">Indikator Capaian</th>
+                                <th class="p-6 text-center w-32">Skor Akhir</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50 text-sm">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="../assets/js/db-mock.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = AuthEngine.getCurrentUser();
+            if (document.getElementById('session-user-name')) {
+                document.getElementById('session-user-name').innerText = user.name;
+            }
+
+            // Slider Banner
+            let slideIdx = 0;
+            const slider = document.getElementById('skoring-slider');
+            setInterval(() => {
+                slideIdx = (slideIdx + 1) % 2;
+                slider.style.transform = `translateX(-${slideIdx * 100}%)`;
+            }, 6000);
+
+            // Cek notifikasi antrean
+            const pendingLkh = MockDB.getLkhForReview(user.id);
+            if (pendingLkh.length > 0) {
+                const badge = document.getElementById('nav-badge-antrean');
+                badge.classList.remove('hidden');
+                badge.innerText = pendingLkh.length;
+            }
+
+            // Generate Skoring Data
+            const data = MockDB.calculateScoringByTeam(user.id);
+            document.getElementById('team-count').innerText = data.length;
+            const tbody = document.querySelector('#table-skoring tbody');
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-12 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">Anda belum memiliki bawahan di dalam sistem.</td></tr>';
+                return;
+            }
+
+            // Sort data from highest score
+            data.sort((a, b) => b.persentase - a.persentase);
+
+            tbody.innerHTML = data.map((d, i) => {
+                let color = 'text-rose-500';
+                let bg = 'bg-rose-500';
+
+                if (d.persentase >= 80) {
+                    color = 'text-emerald-500'; bg = 'bg-emerald-500';
+                } else if (d.persentase >= 50) {
+                    color = 'text-amber-500'; bg = 'bg-amber-500';
+                }
+
+                let rankDisplay = `<span class="text-slate-400">#${i + 1}</span>`;
+                if (i === 0) rankDisplay = '<span class="text-2xl" title="Peringkat 1">🥇</span>';
+                else if (i === 1) rankDisplay = '<span class="text-2xl" title="Peringkat 2">🥈</span>';
+                else if (i === 2) rankDisplay = '<span class="text-2xl" title="Peringkat 3">🥉</span>';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors group">
+                        <td class="p-6 text-center font-black text-xl">${rankDisplay}</td>
+                        <td class="p-6">
+                            <p class="font-black text-slate-800 uppercase tracking-tight text-sm group-hover:text-dki-primary transition-colors">${d.nama}</p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">UID: ${d.user_id}</p>
+                        </td>
+                        <td class="p-6 text-center">
+                            <span class="font-black text-xl text-dki-primary">${d.total_jam_valid}</span> <span class="text-[10px] text-slate-400 uppercase">Jam</span>
+                        </td>
+                        <td class="p-6 w-1/3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Target 160 Jam</span>
+                                <span class="text-[10px] font-black ${color}">${d.persentase}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden shadow-inner">
+                                <div class="h-full rounded-full transition-all duration-1000 ${bg}" style="width:${Math.min(d.persentase, 100)}%"></div>
+                            </div>
+                        </td>
+                        <td class="p-6 text-center">
+                            <span class="text-2xl font-black ${color} tracking-tighter">${d.persentase}</span>
+                        </td>
+                    </tr>`;
+            }).join('');
+        });
+    </script>
+</body>
+
+</html>

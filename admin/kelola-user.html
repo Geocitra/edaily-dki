@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola User - Admin E-Daily DKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // TONE WARNA DKI JAKARTA
+        tailwind.config = {
+            theme: { extend: { colors: { dki: { primary: '#005baa', accent: '#f59e0b', dark: '#0f172a' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden font-sans relative">
+
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
+        onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="bg-white p-2.5 rounded-2xl mb-4 shadow-lg">
+                <img src="../assets/img/dki.png" alt="Logo DKI Jakarta" class="h-12 object-contain">
+            </div>
+            <h2 class="text-white font-black tracking-wider uppercase text-sm">System Admin</h2>
+            <p class="text-dki-accent text-[10px] font-bold uppercase tracking-widest mt-1">E-Daily Report Core</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">⚙️
+                Dashboard Admin</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Master Data
+            </div>
+            <a href="master-bidang.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🏢
+                Organisasi & Bidang</a>
+            <a href="master-tupoksi.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">💼
+                Tupoksi Jabatan</a>
+            <a href="kelola-user.html"
+                class="flex items-center px-4 py-3 text-white bg-dki-primary/90 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all border-l-4 border-dki-accent">👥
+                Kelola Pengguna</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Security & Audit
+            </div>
+            <a href="log-aktivitas-global.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🔐
+                Log Aktivitas Sistem</a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button onclick="AuthEngine.logout()"
+                class="w-full flex justify-center items-center py-3 bg-slate-800 text-slate-300 hover:text-white hover:bg-rose-600 rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest">Keluar
+                Sistem</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+        <header
+            class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden text-slate-500 hover:text-dki-primary focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-lg md:text-xl font-black text-dki-dark uppercase tracking-tight truncate">Manajemen Akun
+                    ASN</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="bukaModalTambah()"
+                    class="bg-dki-primary hover:bg-blue-800 text-white px-4 md:px-6 py-2 rounded-xl text-[10px] md:text-xs font-black tracking-widest uppercase transition-all shadow-lg shadow-blue-200 whitespace-nowrap active:scale-95">
+                    + Tambah Pegawai
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 fade-in">
+
+            <div
+                class="relative w-full h-56 md:h-72 rounded-2xl md:rounded-[2rem] overflow-hidden mb-8 shadow-2xl group">
+                <div id="user-banner-slider"
+                    class="flex w-full h-full transition-transform duration-1000 ease-in-out transform scale-105 group-hover:scale-100">
+                    <img src="../assets/img/dki-3.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                    <img src="../assets/img/dki-1.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                </div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-dki-primary/95 via-dki-dark/70 to-transparent flex items-center p-8 md:p-12">
+                    <div class="w-full max-w-3xl transform transition-transform duration-700 translate-y-0">
+                        <div
+                            class="inline-flex items-center gap-2 mb-4 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full shadow-lg">
+                            <span
+                                class="text-[10px] md:text-xs font-black tracking-widest text-amber-200 uppercase">Akses
+                                & Sekuritas</span>
+                        </div>
+                        <h2
+                            class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4 drop-shadow-lg">
+                            Sentralisasi <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-dki-accent">Sumber
+                                Daya</span>
+                        </h2>
+                        <p class="text-blue-100 text-xs md:text-sm leading-relaxed max-w-xl backdrop-blur-sm">
+                            Kelola identitas digital Aparatur Sipil Negara (ASN). Tentukan otorisasi *Role-Based Access
+                            Control* (RBAC), penempatan unit bidang, dan struktur hierarki persetujuan laporan kinerja.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+                <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/80 flex justify-between items-center">
+                    <h3 class="text-xs md:text-sm font-black text-slate-700 uppercase tracking-[0.2em]">Daftar Pegawai
+                        Aktif</h3>
+                </div>
+                <div class="overflow-x-auto p-0">
+                    <table class="w-full text-left min-w-[800px]" id="table-users">
+                        <thead class="bg-white border-b border-slate-100">
+                            <tr class="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">
+                                <th class="p-6">Identitas Pegawai</th>
+                                <th class="p-6 text-center">Role Akses</th>
+                                <th class="p-6">Unit Kerja / Bidang</th>
+                                <th class="p-6">Atasan Langsung</th>
+                                <th class="p-6 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50 text-xs font-medium text-slate-600"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="panel-form-user"
+                class="hidden fixed inset-0 z-50 bg-slate-900/60 flex justify-end transition-opacity">
+                <div
+                    class="w-full sm:max-w-lg bg-white h-full shadow-2xl p-6 md:p-8 flex flex-col fade-in overflow-hidden">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-xl md:text-2xl font-black text-dki-primary uppercase tracking-tighter">
+                            Registrasi ASN Baru</h3>
+                        <button onclick="tutupModal()"
+                            class="text-slate-400 hover:text-rose-500 transition-colors text-3xl font-light focus:outline-none">&times;</button>
+                    </div>
+                    <form id="form-user" onsubmit="handleSimpanUser(event)"
+                        class="space-y-6 overflow-y-auto pr-2 pb-10 flex-1 custom-scrollbar">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 block">NIP
+                                    / ID</label>
+                                <input type="text" id="u_id"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all uppercase placeholder-slate-400"
+                                    placeholder="Contoh: U012" required>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 block">Username</label>
+                                <input type="text" id="u_username"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all placeholder-slate-400"
+                                    placeholder="nama.user" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 block">Nama
+                                Lengkap & Gelar</label>
+                            <input type="text" id="u_name"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all placeholder-slate-400"
+                                placeholder="Masukkan nama lengkap..." required>
+                        </div>
+                        <div>
+                            <label
+                                class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 block">Otoritas
+                                Role Sistem</label>
+                            <select id="u_role"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all appearance-none cursor-pointer"
+                                required>
+                                <option value="PEGAWAI">ASN / STAF PELAKSANA</option>
+                                <option value="PENILAI">PENILAI / KEPALA BIDANG</option>
+                                <option value="KADIS">PIMPINAN / KEPALA DINAS</option>
+                                <option value="ADMIN">ADMINISTRATOR SISTEM</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 block">Penempatan
+                                Unit Bidang</label>
+                            <select id="u_bidang"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all appearance-none cursor-pointer"></select>
+                        </div>
+                        <div>
+                            <label
+                                class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 block">Atasan
+                                Langsung (Evaluator)</label>
+                            <select id="u_manager"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all appearance-none cursor-pointer"></select>
+                        </div>
+                        <div class="pt-6 mt-auto">
+                            <button type="submit"
+                                class="w-full bg-dki-primary hover:bg-blue-800 text-white font-black py-4 rounded-xl shadow-lg shadow-blue-200 uppercase tracking-widest text-[11px] transition-all active:scale-95">
+                                Simpan Data Pegawai
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/db-mock.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Slider Banner Logic
+            let slideIdx = 0;
+            const slider = document.getElementById('user-banner-slider');
+            setInterval(() => {
+                slideIdx = (slideIdx + 1) % 2;
+                slider.style.transform = `translateX(-${slideIdx * 100}%)`;
+            }, 6000);
+
+            renderTable();
+            populateDropdowns();
+        });
+
+        function renderTable() {
+            const dbData = MockDB._getData();
+            const tbody = document.querySelector('#table-users tbody');
+
+            if (dbData.users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-12 text-center text-slate-400 font-bold text-[10px] uppercase tracking-widest">Belum ada user terdaftar.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = dbData.users.map(u => {
+                const b = dbData.bidang.find(bi => bi.id === u.bidang_id);
+                const m = dbData.users.find(mgr => mgr.id === u.manager_id);
+
+                let roleBadge = 'bg-slate-100 text-slate-600 border-slate-200';
+                if (u.role === 'ADMIN') roleBadge = 'bg-rose-50 text-rose-600 border-rose-200';
+                if (u.role === 'KADIS') roleBadge = 'bg-amber-50 text-amber-600 border-amber-200';
+                if (u.role === 'PENILAI') roleBadge = 'bg-blue-50 text-blue-600 border-blue-200';
+
+                return `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-6">
+                        <p class="font-black text-slate-800 uppercase tracking-tight">${u.name}</p>
+                        <p class="text-[10px] text-slate-400 font-mono mt-1">@${u.username} • UID: ${u.id}</p>
+                    </td>
+                    <td class="p-6 text-center">
+                        <span class="px-3 py-1.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${roleBadge}">${u.role}</span>
+                    </td>
+                    <td class="p-6 font-bold text-slate-700 text-[11px] uppercase tracking-wide">${b ? b.nama : '<span class="text-slate-300 italic">- Global -</span>'}</td>
+                    <td class="p-6 text-[10px] font-bold text-slate-500 uppercase">${m ? m.name : '<span class="text-dki-accent">Pucuk Pimpinan</span>'}</td>
+                    <td class="p-6 text-center">
+                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full font-black text-[9px] uppercase tracking-widest border border-emerald-100">Aktif</span>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function populateDropdowns() {
+            const dbData = MockDB._getData();
+            document.getElementById('u_bidang').innerHTML = '<option value="">- GLOBAL / TANPA BIDANG -</option>' + dbData.bidang.map(b => `<option value="${b.id}">${b.nama.toUpperCase()}</option>`).join('');
+            document.getElementById('u_manager').innerHTML = '<option value="">- PUCUK PIMPINAN (TANPA ATASAN) -</option>' + dbData.users.filter(u => u.role !== 'PEGAWAI').map(u => `<option value="${u.id}">${u.name.toUpperCase()} (${u.role})</option>`).join('');
+        }
+
+        function bukaModalTambah() { document.getElementById('panel-form-user').classList.remove('hidden'); }
+        function tutupModal() { document.getElementById('panel-form-user').classList.add('hidden'); document.getElementById('form-user').reset(); }
+
+        function handleSimpanUser(e) {
+            e.preventDefault();
+            const dbData = MockDB._getData();
+            const newId = document.getElementById('u_id').value.trim();
+            const newUsername = document.getElementById('u_username').value.trim().toLowerCase();
+
+            if (dbData.users.find(u => u.id === newId || u.username === newUsername)) {
+                alert('GAGAL: NIP/ID atau Username sudah digunakan oleh pegawai lain!');
+                return;
+            }
+
+            const newUser = {
+                id: newId,
+                name: document.getElementById('u_name').value.trim(),
+                username: newUsername,
+                role: document.getElementById('u_role').value,
+                bidang_id: document.getElementById('u_bidang').value || null,
+                manager_id: document.getElementById('u_manager').value || null
+            };
+
+            dbData.users.push(newUser);
+            MockDB._saveData(dbData);
+
+            const currentUser = AuthEngine.getCurrentUser();
+            if (currentUser) {
+                MockDB.insertLog(currentUser.id, 'CREATE_USER', `Mendaftarkan entitas ASN baru: ${newUser.name} (${newUser.role})`);
+            }
+
+            alert('Proses registrasi akun pegawai berhasil diselesaikan!');
+            tutupModal();
+            renderTable();
+            populateDropdowns();
+        }
+    </script>
+</body>
+
+</html>

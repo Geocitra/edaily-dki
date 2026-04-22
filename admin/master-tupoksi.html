@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Tupoksi - Admin E-Daily DKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // TONE WARNA DKI JAKARTA (Biru Jakarta & Kuning Emas)
+        tailwind.config = {
+            theme: { extend: { colors: { dki: { primary: '#005baa', accent: '#f59e0b', dark: '#0f172a' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden font-sans relative">
+
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
+        onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="bg-white p-2.5 rounded-2xl mb-4 shadow-lg">
+                <img src="../assets/img/dki.png" alt="Logo DKI Jakarta" class="h-12 object-contain">
+            </div>
+
+            <h2 class="text-white font-black tracking-wider uppercase text-sm">System Admin</h2>
+            <p class="text-dki-accent text-[10px] font-bold uppercase tracking-widest mt-1">E-Daily Report Core</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">⚙️
+                Dashboard Admin</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Master Data
+            </div>
+            <a href="master-bidang.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🏢
+                Organisasi & Bidang</a>
+            <a href="master-tupoksi.html"
+                class="flex items-center px-4 py-3 text-white bg-dki-primary/90 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all border-l-4 border-dki-accent">💼
+                Tupoksi Jabatan</a>
+            <a href="kelola-user.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">👥
+                Kelola Pengguna</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Security & Audit
+            </div>
+            <a href="log-aktivitas-global.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🔐
+                Log Aktivitas Sistem</a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button onclick="AuthEngine.logout()"
+                class="w-full flex justify-center items-center py-3 bg-slate-800 text-slate-300 hover:text-white hover:bg-rose-600 rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest">Keluar
+                Sistem</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+        <header
+            class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden text-slate-500 hover:text-dki-primary focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-tight truncate">Kamus Tupoksi
+                    Jabatan</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <div id="session-user-name" class="text-xs font-bold text-slate-800 uppercase">Memuat...</div>
+                    <div id="session-user-role"
+                        class="text-[10px] font-bold text-dki-primary uppercase tracking-widest">System Admin</div>
+                </div>
+                <div
+                    class="h-10 w-10 rounded-full bg-slate-100 text-dki-primary flex items-center justify-center text-lg shadow-inner font-black border border-slate-200 flex-shrink-0">
+                    A</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 fade-in">
+
+            <div
+                class="relative w-full h-56 md:h-72 rounded-2xl md:rounded-[2rem] overflow-hidden mb-6 shadow-2xl group">
+                <div id="tupoksi-banner-slider"
+                    class="flex w-full h-full transition-transform duration-1000 ease-in-out transform scale-105 group-hover:scale-100">
+                    <img src="../assets/img/dki-2.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                    <img src="../assets/img/dki-3.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                </div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-dki-primary/95 via-dki-dark/70 to-transparent flex items-center">
+                    <div class="p-6 md:p-12 w-full max-w-3xl transform transition-transform duration-700 translate-y-0">
+                        <div
+                            class="inline-flex items-center gap-2 mb-4 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full shadow-lg">
+                            <span
+                                class="text-[10px] md:text-xs font-black tracking-widest text-amber-200 uppercase">Standardisasi
+                                Kinerja</span>
+                        </div>
+                        <h2
+                            class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4 drop-shadow-lg">
+                            Kamus Tugas Pokok <br class="hidden md:block"> <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-400">&
+                                Fungsi (Tupoksi)</span>
+                        </h2>
+                        <p class="text-blue-100 text-xs md:text-sm leading-relaxed max-w-xl backdrop-blur-sm">
+                            Kelola deskripsi beban kerja dan tetapkan alokasi target waktu (jam/bulan) untuk setiap Unit
+                            Bidang. Data ini menjadi referensi utama dalam penyusunan SKP Pegawai.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="relative w-full md:w-1/2 lg:w-1/3">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">🔍</span>
+                    <input type="text" id="search-tupoksi"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-dki-primary outline-none transition-all placeholder-slate-400"
+                        placeholder="Cari berdasarkan deskripsi tugas..." onkeyup="filterTable()">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+
+                <div class="lg:col-span-1">
+                    <div
+                        class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-xl relative overflow-hidden sticky top-0">
+                        <div class="absolute top-0 left-0 w-full h-1.5 bg-dki-primary"></div>
+                        <h3 class="text-lg font-black text-slate-800 uppercase tracking-tighter mb-6 border-b pb-4 border-slate-100"
+                            id="form-title">Registrasi Tugas</h3>
+
+                        <form id="form-tupoksi" onsubmit="handleSimpanTupoksi(event)" class="space-y-5">
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Unit
+                                    Kerja Terkait</label>
+                                <select id="t_bidang"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all appearance-none"
+                                    required></select>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Deskripsi
+                                    Pekerjaan</label>
+                                <textarea id="t_deskripsi" rows="4"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-700 focus:ring-2 focus:ring-dki-primary outline-none transition-all placeholder-slate-400 resize-none"
+                                    placeholder="Jelaskan detail tugas pokok..." required></textarea>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Beban
+                                    Kerja Bulanan</label>
+                                <div
+                                    class="flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-dki-primary transition-all">
+                                    <input type="number" id="t_beban"
+                                        class="w-full bg-transparent border-none p-2 text-xl font-black text-slate-800 outline-none"
+                                        value="160" min="1" required>
+                                    <span
+                                        class="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap bg-slate-200/50 px-2 py-1 rounded">Jam</span>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 flex flex-col gap-3">
+                                <button type="submit"
+                                    class="w-full bg-dki-primary hover:bg-blue-800 text-white font-black py-3.5 rounded-xl shadow-lg shadow-blue-200 uppercase tracking-widest text-[11px] transition-all active:scale-95">
+                                    Simpan Tupoksi
+                                </button>
+                                <button type="button" onclick="resetForm()"
+                                    class="w-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 font-bold py-3 rounded-xl uppercase tracking-widest text-[10px] transition-all">
+                                    Batal / Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div
+                        class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden flex flex-col h-full">
+                        <div class="p-6 bg-slate-50/80 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="text-xs font-black text-slate-700 uppercase tracking-[0.2em]">Katalog Tupoksi
+                                Aktif</h3>
+                            <span
+                                class="px-3 py-1.5 bg-blue-100 text-blue-700 text-[10px] font-black rounded-full uppercase tracking-wider border border-blue-200"
+                                id="total-tupoksi">0 TUGAS</span>
+                        </div>
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left min-w-[600px]" id="table-tupoksi">
+                                <thead>
+                                    <tr
+                                        class="text-[10px] font-black uppercase text-slate-400 border-b border-slate-100 bg-white tracking-widest">
+                                        <th class="p-5 w-40">Unit / Bidang</th>
+                                        <th class="p-5">Deskripsi Tupoksi</th>
+                                        <th class="p-5 text-center w-24">Beban</th>
+                                        <th class="p-5 text-center w-32">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-50 text-[11px] font-medium text-slate-600">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/db-mock.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        // Fungsi Toggle Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        let isEditingId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = AuthEngine.getCurrentUser();
+            if (document.getElementById('session-user-name')) {
+                document.getElementById('session-user-name').innerText = currentUser.name;
+            }
+
+            // Slider Banner Logic
+            let slideIdx = 0;
+            const slider = document.getElementById('tupoksi-banner-slider');
+            setInterval(() => {
+                slideIdx = (slideIdx + 1) % 2;
+                slider.style.transform = `translateX(-${slideIdx * 100}%)`;
+            }, 6000);
+
+            // Inisialisasi DB Mock Tupoksi jika belum ada
+            const db = MockDB._getData();
+            if (!db.tupoksi) {
+                db.tupoksi = [{ id: "T01", bidang_id: "B01", deskripsi: "Membangun dan memelihara arsitektur sistem informasi daerah.", beban_jam: 120 }];
+                MockDB._saveData(db);
+            }
+
+            populateBidang();
+            renderTable();
+        });
+
+        function populateBidang() {
+            const dbData = MockDB._getData();
+            const selectBidang = document.getElementById('t_bidang');
+            if (dbData.bidang.length === 0) {
+                selectBidang.innerHTML = '<option value="">- KOSONG (Isi Master Bidang Dulu) -</option>';
+            } else {
+                selectBidang.innerHTML = dbData.bidang.map(b => `<option value="${b.id}">${b.nama.toUpperCase()}</option>`).join('');
+            }
+        }
+
+        function renderTable(filter = "") {
+            const dbData = MockDB._getData();
+            const tbody = document.querySelector('#table-tupoksi tbody');
+            let list = dbData.tupoksi || [];
+
+            if (filter) list = list.filter(t => t.deskripsi.toLowerCase().includes(filter.toLowerCase()));
+            document.getElementById('total-tupoksi').innerText = `${list.length} TUGAS`;
+
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">Belum ada entitas tupoksi terdaftar.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = list.map(t => {
+                const b = dbData.bidang.find(bi => bi.id === t.bidang_id);
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-5 font-black text-slate-800 uppercase tracking-tighter"><span class="bg-slate-100 px-2 py-1 rounded text-[9px] text-slate-500 border border-slate-200 mb-1 inline-block">${b ? b.id : '-'}</span><br>${b ? b.nama : '<span class="text-rose-500">Bidang Dihapus</span>'}</td>
+                        <td class="p-5 leading-relaxed text-slate-700">${t.deskripsi}</td>
+                        <td class="p-5 text-center">
+                            <span class="bg-amber-100 text-amber-700 font-black px-2 py-1 rounded-md border border-amber-200">${t.beban_jam}h</span>
+                        </td>
+                        <td class="p-5 text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="siapkanEdit('${t.id}')" title="Edit Tupoksi" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-dki-primary rounded-lg hover:bg-dki-primary hover:text-white transition-all border border-blue-100 hover:border-transparent">✏️</button>
+                                <button onclick="hapusData('${t.id}')" title="Hapus Tupoksi" class="w-8 h-8 flex items-center justify-center bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-500 hover:text-white transition-all border border-rose-100 hover:border-transparent">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterTable() {
+            renderTable(document.getElementById('search-tupoksi').value);
+        }
+
+        function handleSimpanTupoksi(e) {
+            e.preventDefault();
+            const dbData = MockDB._getData();
+            const bidangValue = document.getElementById('t_bidang').value;
+
+            if (!bidangValue) return alert("Pilih Unit Kerja terlebih dahulu. Jika kosong, tambahkan di Master Bidang.");
+
+            const data = {
+                bidang_id: bidangValue,
+                deskripsi: document.getElementById('t_deskripsi').value.trim(),
+                beban_jam: parseInt(document.getElementById('t_beban').value)
+            };
+
+            if (isEditingId) {
+                const idx = dbData.tupoksi.findIndex(t => t.id === isEditingId);
+                if (idx > -1) dbData.tupoksi[idx] = { id: isEditingId, ...data };
+                MockDB.insertLog(AuthEngine.getCurrentUser().id, 'UPDATE_MASTER', `Memperbarui data deskripsi Tupoksi: ${isEditingId}`);
+            } else {
+                const newId = "T" + Date.now();
+                dbData.tupoksi.push({ id: newId, ...data });
+                MockDB.insertLog(AuthEngine.getCurrentUser().id, 'CREATE_MASTER', `Menambahkan referensi Tupoksi baru untuk bidang ${data.bidang_id}`);
+            }
+
+            MockDB._saveData(dbData);
+            resetForm();
+            renderTable();
+        }
+
+        function siapkanEdit(id) {
+            const d = MockDB._getData().tupoksi.find(t => t.id === id);
+            if (d) {
+                document.getElementById('t_bidang').value = d.bidang_id;
+                document.getElementById('t_deskripsi').value = d.deskripsi;
+                document.getElementById('t_beban').value = d.beban_jam;
+                isEditingId = id;
+                document.getElementById('form-title').innerText = "Modifikasi Tugas";
+                document.querySelector('#form-tupoksi button[type="submit"]').innerText = 'Update Tupoksi';
+            }
+        }
+
+        function hapusData(id) {
+            if (confirm('TINDAKAN KRITIKAL:\nApakah Anda yakin ingin menghapus referensi Tupoksi ini?')) {
+                const db = MockDB._getData();
+                db.tupoksi = db.tupoksi.filter(t => t.id !== id);
+                MockDB._saveData(db);
+                MockDB.insertLog(AuthEngine.getCurrentUser().id, 'DELETE_MASTER', `Menghapus referensi Tupoksi: ${id}`);
+                renderTable();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('form-tupoksi').reset();
+            isEditingId = null;
+            document.getElementById('form-title').innerText = "Registrasi Tugas";
+            document.querySelector('#form-tupoksi button[type="submit"]').innerText = 'Simpan Tupoksi';
+        }
+    </script>
+</body>
+
+</html>

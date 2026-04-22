@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat LKH - E-Daily Report DKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // TONE WARNA DKI JAKARTA
+        tailwind.config = {
+            theme: { extend: { colors: { dki: { primary: '#005baa', accent: '#f59e0b', dark: '#0f172a' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        /* Standarisasi Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden font-sans relative">
+
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
+        onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="bg-white p-2.5 rounded-2xl mb-4 shadow-lg">
+                <img src="../assets/img/dki.png" alt="Logo DKI Jakarta" class="h-12 object-contain">
+            </div>
+
+            <h2 class="text-white font-black tracking-wider uppercase text-sm">E-Daily Report</h2>
+            <p class="text-dki-accent text-[10px] font-bold uppercase tracking-widest mt-1">Modul Pegawai</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📊
+                Dashboard Saya</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kinerja</div>
+            <a href="input-skp.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🎯
+                Target SKP</a>
+            <a href="input-lkh.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">✍️
+                Input LKH Harian</a>
+
+            <a href="riwayat-lkh.html"
+                class="flex items-center px-4 py-3 text-white bg-dki-primary/90 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all border-l-4 border-dki-accent">📚
+                Riwayat Laporan</a>
+
+            <a href="peta-aktivitas.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🗺️
+                Jejak Spasial</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Informasi</div>
+            <a href="pengumuman.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">📢
+                Pengumuman</a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button onclick="AuthEngine.logout()"
+                class="w-full flex justify-center items-center py-3 bg-slate-800 text-slate-300 hover:text-white hover:bg-rose-600 rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest border border-transparent hover:border-rose-500">Keluar
+                Sistem</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+        <header
+            class="h-16 md:h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden p-2 bg-slate-100 rounded-lg text-slate-500 hover:text-dki-primary focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <h1 class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-tight truncate">Log Jurnal
+                    LKH</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <div id="session-user-name" class="text-xs font-bold text-slate-800 uppercase">Memuat...</div>
+                    <div class="text-[10px] font-bold text-dki-primary uppercase tracking-widest">ASN / Pegawai</div>
+                </div>
+                <div
+                    class="h-10 w-10 rounded-full bg-slate-100 text-dki-primary flex items-center justify-center text-lg shadow-inner font-black border border-slate-200 flex-shrink-0">
+                    👤</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 fade-in custom-scrollbar">
+
+            <div
+                class="relative w-full h-48 md:h-64 rounded-2xl md:rounded-[2rem] overflow-hidden mb-6 shadow-2xl group border-4 border-white">
+                <div
+                    class="absolute inset-0 flex transition-transform duration-1000 ease-in-out transform scale-105 group-hover:scale-100">
+                    <img src="../assets/img/dki-3.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                </div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-dki-primary/95 via-dki-dark/70 to-transparent flex items-center p-6 md:p-10">
+                    <div class="w-full max-w-2xl transform transition-transform duration-700 translate-y-0">
+                        <div
+                            class="inline-flex items-center gap-2 mb-3 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full shadow-lg">
+                            <span class="text-[10px] font-black tracking-widest text-emerald-300 uppercase">Jurnal
+                                Pekerjaan</span>
+                        </div>
+                        <h2
+                            class="text-2xl md:text-4xl font-black text-white tracking-tight leading-tight mb-2 drop-shadow-lg">
+                            Riwayat <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-400">Aktivitas
+                                Pegawai</span>
+                        </h2>
+                        <p
+                            class="text-blue-100 text-xs md:text-sm leading-relaxed max-w-lg backdrop-blur-sm hidden sm:block">
+                            Seluruh riwayat laporan kinerja (LKH) Anda terpusat di sini. Pantau status persetujuan
+                            atasan dan pastikan target capaian jam kerja bulanan Anda terpenuhi.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="relative w-full md:w-96">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">🔍</span>
+                    <input type="text" id="search-lkh"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-dki-primary outline-none transition-all placeholder-slate-400"
+                        placeholder="Cari aktivitas pekerjaan..." onkeyup="renderTable()">
+                </div>
+                <select id="filter-status"
+                    class="w-full md:w-auto bg-slate-50 border border-slate-200 rounded-xl px-6 py-3 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-dki-primary outline-none transition-all appearance-none cursor-pointer"
+                    onchange="renderTable()">
+                    <option value="ALL">🌐 SEMUA STATUS</option>
+                    <option value="APPROVED">✓ APPROVED (DISETUJUI)</option>
+                    <option value="PENDING">⏳ PENDING (MENUNGGU)</option>
+                    <option value="REJECTED">✕ REJECTED (DITOLAK)</option>
+                </select>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+                <div class="overflow-x-auto p-0">
+                    <table class="w-full text-left min-w-[700px]" id="table-riwayat">
+                        <thead>
+                            <tr
+                                class="bg-slate-50 border-b border-slate-100 text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">
+                                <th class="p-6 w-48">Waktu & Tanggal</th>
+                                <th class="p-6">Uraian Aktivitas</th>
+                                <th class="p-6 text-center w-32">Durasi</th>
+                                <th class="p-6 text-center w-40">Status Validasi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="../assets/js/db-mock.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = AuthEngine.getCurrentUser();
+            if (document.getElementById('session-user-name')) {
+                document.getElementById('session-user-name').innerText = currentUser.name;
+            }
+            renderTable();
+        });
+
+        function renderTable() {
+            const user = AuthEngine.getCurrentUser();
+            const raw = MockDB.getLkhByUserId(user.id);
+            const q = document.getElementById('search-lkh').value.toLowerCase();
+            const s = document.getElementById('filter-status').value;
+
+            const filtered = raw.filter(l => (l.aktivitas.toLowerCase().includes(q)) && (s === 'ALL' || l.status === s));
+            const tbody = document.querySelector('#table-riwayat tbody');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-12 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">Tidak ditemukan riwayat pelaporan yang sesuai.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(l => {
+                let badgeClass = 'bg-amber-50 text-amber-600 border-amber-200';
+                if (l.status === 'APPROVED') badgeClass = 'bg-emerald-50 text-emerald-600 border-emerald-200';
+                if (l.status === 'REJECTED') badgeClass = 'bg-rose-50 text-rose-600 border-rose-200';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors group">
+                        <td class="p-6">
+                            <p class="font-black text-slate-800 uppercase tracking-tighter text-xs md:text-sm">${new Date(l.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                            <p class="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-widest">${new Date(l.tanggal).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB</p>
+                        </td>
+                        <td class="p-6">
+                            <p class="text-xs font-bold text-slate-700 leading-relaxed group-hover:text-dki-primary transition-colors">${l.aktivitas}</p>
+                            <div class="mt-2 flex gap-2">
+                                <span class="text-[9px] bg-slate-100 border border-slate-200 px-2 py-1 rounded-md font-black text-slate-500 uppercase tracking-widest">📍 ${l.lokasi_mode}</span>
+                            </div>
+                            ${l.feedback ? `<div class="mt-3 p-3 bg-rose-50 text-rose-700 text-[10px] font-bold rounded-xl border border-rose-200 shadow-sm leading-relaxed">Pesan Koreksi: "${l.feedback}"</div>` : ''}
+                        </td>
+                        <td class="p-6 text-center font-black text-lg text-dki-primary">
+                            ${l.waktu_menit}<span class="text-[10px] text-slate-400 ml-1 uppercase tracking-widest">Menit</span>
+                        </td>
+                        <td class="p-6 text-center">
+                            <span class="px-3 py-1.5 rounded-full font-black text-[9px] uppercase tracking-wider border ${badgeClass}">${l.status}</span>
+                        </td>
+                    </tr>`;
+            }).join('');
+        }
+    </script>
+</body>
+
+</html>

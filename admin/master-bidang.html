@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Bidang - Admin E-Daily DKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // TONE WARNA DKI JAKARTA (Biru Jakarta & Kuning Emas)
+        tailwind.config = {
+            theme: { extend: { colors: { dki: { primary: '#005baa', accent: '#f59e0b', dark: '#0f172a' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden font-sans relative">
+
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
+        onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="bg-white p-2.5 rounded-2xl mb-4 shadow-lg">
+                <img src="../assets/img/dki.png" alt="Logo DKI Jakarta" class="h-12 object-contain">
+            </div>
+
+            <h2 class="text-white font-black tracking-wider uppercase text-sm">System Admin</h2>
+            <p class="text-dki-accent text-[10px] font-bold uppercase tracking-widest mt-1">E-Daily Report Core</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm custom-scrollbar">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">⚙️
+                Dashboard Admin</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Master Data
+            </div>
+            <a href="master-bidang.html"
+                class="flex items-center px-4 py-3 text-white bg-dki-primary/90 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all border-l-4 border-dki-accent">🏢
+                Organisasi & Bidang</a>
+            <a href="master-tupoksi.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">💼
+                Tupoksi Jabatan</a>
+            <a href="kelola-user.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">👥
+                Kelola Pengguna</a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Security & Audit
+            </div>
+            <a href="log-aktivitas-global.html"
+                class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors">🔐
+                Log Aktivitas Sistem</a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button onclick="AuthEngine.logout()"
+                class="w-full flex justify-center items-center py-3 bg-slate-800 text-slate-300 hover:text-white hover:bg-rose-600 rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest">Keluar
+                Sistem</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+        <header
+            class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden text-slate-500 hover:text-dki-primary focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-tight truncate">Master Bidang
+                    Kerja</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <div id="session-user-name" class="text-xs font-bold text-slate-800 uppercase">Memuat...</div>
+                    <div id="session-user-role"
+                        class="text-[10px] font-bold text-dki-primary uppercase tracking-widest">System Admin</div>
+                </div>
+                <div
+                    class="h-10 w-10 rounded-full bg-slate-100 text-dki-primary flex items-center justify-center text-lg shadow-inner font-black border border-slate-200 flex-shrink-0">
+                    A</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 fade-in">
+
+            <div
+                class="relative w-full h-56 md:h-72 rounded-2xl md:rounded-[2rem] overflow-hidden mb-8 shadow-2xl group">
+                <div id="bidang-banner-slider"
+                    class="flex w-full h-full transition-transform duration-1000 ease-in-out transform scale-105 group-hover:scale-100">
+                    <img src="../assets/img/dki-1.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                    <img src="../assets/img/dki-3.png" class="w-full h-full object-cover flex-shrink-0 brightness-[0.4]"
+                        alt="DKI">
+                </div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-dki-primary/95 via-dki-dark/70 to-transparent flex items-center">
+                    <div class="p-6 md:p-12 w-full max-w-3xl transform transition-transform duration-700 translate-y-0">
+                        <div
+                            class="inline-flex items-center gap-2 mb-4 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full shadow-lg">
+                            <span
+                                class="text-[10px] md:text-xs font-black tracking-widest text-amber-200 uppercase">Manajemen
+                                Struktur Organisasi</span>
+                        </div>
+                        <h2
+                            class="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4 drop-shadow-lg">
+                            Pemetaan <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-400">Unit
+                                Kerja</span>
+                        </h2>
+                        <p class="text-blue-100 text-xs md:text-sm leading-relaxed max-w-xl backdrop-blur-sm">
+                            Atur dan klasifikasikan struktur bidang atau divisi yang beroperasi dalam instansi. Relasi
+                            ini mendasari pengelompokkan fungsional ASN dan Tupoksi pada sistem.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+
+                <div class="lg:col-span-1">
+                    <div
+                        class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-xl relative overflow-hidden sticky top-0">
+                        <div class="absolute top-0 left-0 w-full h-1.5 bg-dki-primary"></div>
+                        <h3 class="text-lg font-black text-slate-800 uppercase tracking-tighter mb-6 border-b pb-4 border-slate-100"
+                            id="form-title">Registrasi Bidang</h3>
+
+                        <form id="form-bidang" onsubmit="handleSimpanBidang(event)" class="space-y-5">
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Kode
+                                    Bidang (ID)</label>
+                                <input type="text" id="bidang_id"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all uppercase placeholder-slate-400"
+                                    placeholder="Contoh: B01" required>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 mb-1 block">Nama
+                                    Unit / Bidang Kerja</label>
+                                <input type="text" id="bidang_nama"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-dki-primary outline-none transition-all placeholder-slate-400"
+                                    placeholder="Nama lengkap bidang..." required>
+                            </div>
+
+                            <div class="pt-4 flex flex-col gap-3">
+                                <button type="submit"
+                                    class="w-full bg-dki-primary hover:bg-blue-800 text-white font-black py-3.5 rounded-xl shadow-lg shadow-blue-200 uppercase tracking-widest text-[11px] transition-all active:scale-95">
+                                    Simpan Data Bidang
+                                </button>
+                                <button type="button" onclick="resetForm()"
+                                    class="w-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 font-bold py-3 rounded-xl uppercase tracking-widest text-[10px] transition-all">
+                                    Batal / Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div
+                        class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden flex flex-col h-full">
+                        <div class="p-6 bg-slate-50/80 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="text-xs font-black text-slate-700 uppercase tracking-[0.2em]">Daftar Unit Kerja
+                                Aktif</h3>
+                            <span
+                                class="px-3 py-1.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-full uppercase tracking-wider border border-emerald-200"
+                                id="total-bidang">0 Bidang</span>
+                        </div>
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left min-w-[500px]" id="table-bidang">
+                                <thead>
+                                    <tr
+                                        class="text-[10px] font-black uppercase text-slate-400 border-b border-slate-100 bg-white">
+                                        <th class="p-5 w-32">Kode UID</th>
+                                        <th class="p-5">Nama Bidang / Unit</th>
+                                        <th class="p-5 w-32 text-center">Aksi Konfigurasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-50 font-medium text-xs text-slate-600">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/db-mock.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        // Fungsi Toggle Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        let isEditing = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = AuthEngine.getCurrentUser();
+            if (document.getElementById('session-user-name')) {
+                document.getElementById('session-user-name').innerText = currentUser.name;
+            }
+
+            // Slider Banner
+            let slideIdx = 0;
+            const slider = document.getElementById('bidang-banner-slider');
+            setInterval(() => {
+                slideIdx = (slideIdx + 1) % 2;
+                slider.style.transform = `translateX(-${slideIdx * 100}%)`;
+            }, 6000);
+
+            renderTable();
+        });
+
+        function renderTable() {
+            const dbData = MockDB._getData();
+            const bids = dbData.bidang;
+            const tbody = document.querySelector('#table-bidang tbody');
+
+            document.getElementById('total-bidang').innerText = `${bids.length} BIDANG TERDAFTAR`;
+
+            if (bids.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="p-12 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">Belum ada entitas unit kerja terdaftar.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = bids.map(b => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-5 font-black text-slate-800 tracking-tighter uppercase"><span class="bg-slate-100 px-2 py-1 rounded text-[10px] text-slate-600 border border-slate-200"># ${b.id}</span></td>
+                    <td class="p-5 text-slate-700 font-bold uppercase text-[11px] tracking-wide">${b.nama}</td>
+                    <td class="p-5">
+                        <div class="flex justify-center gap-2">
+                            <button onclick="handleEdit('${b.id}', '${b.nama}')" title="Edit Bidang" class="w-8 h-8 flex items-center justify-center bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-500 hover:text-white transition-all shadow-sm border border-amber-100 hover:border-transparent">
+                                ✏️
+                            </button>
+                            <button onclick="handleHapus('${b.id}')" title="Hapus Bidang" class="w-8 h-8 flex items-center justify-center bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-rose-100 hover:border-transparent">
+                                🗑️
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function handleSimpanBidang(e) {
+            e.preventDefault();
+            const id = document.getElementById('bidang_id').value.trim().toUpperCase();
+            const nama = document.getElementById('bidang_nama').value.trim();
+            const dbData = MockDB._getData();
+
+            if (isEditing) {
+                const idx = dbData.bidang.findIndex(b => b.id === id);
+                if (idx > -1) dbData.bidang[idx].nama = nama;
+                MockDB.insertLog(AuthEngine.getCurrentUser().id, 'UPDATE_MASTER', `Memperbarui nama struktur bidang ${id} menjadi ${nama}`);
+            } else {
+                if (dbData.bidang.find(b => b.id === id)) return alert('GAGAL: Kode Bidang sudah digunakan. Gunakan ID unik lainnya.');
+                dbData.bidang.push({ id, nama });
+                MockDB.insertLog(AuthEngine.getCurrentUser().id, 'CREATE_MASTER', `Menambahkan struktur bidang baru: ${nama} (${id})`);
+            }
+
+            MockDB._saveData(dbData);
+            resetForm();
+            renderTable();
+        }
+
+        function handleEdit(id, nama) {
+            document.getElementById('bidang_id').value = id;
+            document.getElementById('bidang_id').readOnly = true;
+            document.getElementById('bidang_id').classList.add('bg-slate-200', 'text-slate-500', 'cursor-not-allowed');
+            document.getElementById('bidang_nama').value = nama;
+
+            isEditing = true;
+            document.getElementById('form-title').innerText = "Modifikasi Bidang";
+            document.querySelector('#form-bidang button[type="submit"]').innerText = 'Update Perubahan';
+        }
+
+        function handleHapus(id) {
+            if (!confirm(`TINDAKAN KRITIKAL:\nApakah Anda yakin ingin menghapus bidang dengan ID: ${id}?\n\nPastikan tidak ada entitas ASN/Pegawai yang masih tertaut di bidang ini.`)) return;
+
+            const dbData = MockDB._getData();
+            const userTertaut = dbData.users.filter(u => u.bidang_id === id);
+            if (userTertaut.length > 0) {
+                alert(`GAGAL MENGHAPUS:\nTerdapat ${userTertaut.length} pegawai yang masih terikat pada bidang ini. Harap mutasi atau ubah data bidang pegawai tersebut terlebih dahulu melalui menu Kelola Pengguna.`);
+                return;
+            }
+
+            dbData.bidang = dbData.bidang.filter(b => b.id !== id);
+            MockDB._saveData(dbData);
+            MockDB.insertLog(AuthEngine.getCurrentUser().id, 'DELETE_MASTER', `Menghapus struktur bidang: ${id}`);
+            renderTable();
+        }
+
+        function resetForm() {
+            document.getElementById('form-bidang').reset();
+            const idInput = document.getElementById('bidang_id');
+            idInput.readOnly = false;
+            idInput.classList.remove('bg-slate-200', 'text-slate-500', 'cursor-not-allowed');
+            isEditing = false;
+            document.getElementById('form-title').innerText = "Registrasi Bidang";
+            document.querySelector('#form-bidang button[type="submit"]').innerText = 'Simpan Data Bidang';
+        }
+    </script>
+</body>
+
+</html>
