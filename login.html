@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - E-Daily Report Pemprov DKI Jakarta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: { colors: { dki: { primary: '#1e3a8a', accent: '#f97316', dark: '#0f172a' } } }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="bg-slate-50 h-screen flex overflow-hidden">
+
+    <div class="hidden lg:flex lg:w-1/2 relative bg-dki-dark overflow-hidden">
+        <div id="login-slider" class="flex w-full h-full transition-transform duration-1000 ease-in-out">
+            <img src="assets/img/dki-1.png" class="w-full h-full object-cover flex-shrink-0 opacity-80" alt="DKI 1">
+            <img src="assets/img/dki-2.png" class="w-full h-full object-cover flex-shrink-0 opacity-80" alt="DKI 2">
+            <img src="assets/img/dki-3.png" class="w-full h-full object-cover flex-shrink-0 opacity-80" alt="DKI 3">
+        </div>
+        <div
+            class="absolute inset-0 bg-gradient-to-t from-dki-dark/90 via-transparent to-transparent flex flex-col justify-end p-12">
+            <img src="assets/img/dki.png" class="h-20 w-auto mb-6 drop-shadow-lg object-contain" alt="Logo DKI"
+                style="align-self: flex-start;">
+            <h1 class="text-4xl font-bold text-white mb-2 leading-tight">Transformasi Kinerja<br>Aparatur Sipil Negara
+            </h1>
+            <p class="text-slate-300 text-lg">Sistem Pelaporan Kinerja Harian (E-Daily Report) Terintegrasi Pemerintah
+                Provinsi DKI Jakarta.</p>
+        </div>
+    </div>
+
+    <div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 sm:p-16 bg-white overflow-y-auto">
+        <div class="w-full max-w-md fade-in">
+            <div class="text-center mb-10 lg:hidden">
+                <img src="assets/img/dki.png" class="h-20 mx-auto mb-4" alt="Logo DKI">
+                <h2 class="text-2xl font-bold text-dki-primary">E-Daily Report</h2>
+                <p class="text-slate-500">Pemprov DKI Jakarta</p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang Kembali</h2>
+            <p class="text-slate-500 mb-8">Pilih role (hak akses) di bawah ini untuk memulai sesi simulasi Anda.</p>
+
+            <div class="space-y-4" id="role-buttons">
+            </div>
+
+            <div
+                class="mt-10 flex items-center justify-center gap-2 text-sm text-emerald-600 bg-emerald-50 py-2 rounded-lg border border-emerald-100">
+                <span class="relative flex h-3 w-3">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                Engine Database Mockup Ready
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/db-mock.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Slider Logic
+            let slideIndex = 0;
+            setInterval(() => {
+                slideIndex = (slideIndex + 1) % 3;
+                document.getElementById('login-slider').style.transform = `translateX(-${slideIndex * 100}%)`;
+            }, 5000);
+
+            // Redirect jika sudah login
+            const currentUser = AuthEngine.getCurrentUser();
+            if (currentUser) {
+                const routes = { 'ADMIN': 'admin/', 'KADIS': 'kadis/', 'PENILAI': 'penilai/', 'PEGAWAI': 'pegawai/' };
+                if (routes[currentUser.role]) window.location.href = routes[currentUser.role] + 'dashboard.html';
+            }
+
+            // Generate Tombol Role
+            const users = MockDB.getUsers();
+            const container = document.getElementById('role-buttons');
+            const presentasiUsers = [
+                users.find(u => u.role === 'ADMIN'),
+                users.find(u => u.role === 'KADIS'),
+                users.find(u => u.id === 'U04'), // Kasi
+                users.find(u => u.id === 'U08')  // Staf
+            ];
+
+            presentasiUsers.forEach(user => {
+                if (!user) return;
+                const btn = document.createElement('button');
+                btn.className = 'w-full flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-xl hover:border-dki-accent hover:bg-orange-50 transition-all duration-200 group';
+
+                let roleLabel = user.role === 'ADMIN' ? "Administrator Sistem" :
+                    user.role === 'KADIS' ? "Kepala Dinas (Top Level)" :
+                        user.role === 'PENILAI' ? "Atasan / Penilai LKH" : "Pegawai / Staf Pelapor";
+
+                btn.innerHTML = `
+                    <strong class="text-lg text-dki-primary group-hover:text-dki-accent transition-colors">${roleLabel}</strong>
+                    <span class="text-sm text-slate-500 mt-1">Login sbg: ${user.name}</span>
+                `;
+                btn.onclick = () => AuthEngine.login(user);
+                container.appendChild(btn);
+            });
+        });
+    </script>
+</body>
+
+</html>

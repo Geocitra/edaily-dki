@@ -10,7 +10,7 @@ const AuthEngine = {
     SESSION_KEY: 'edaily_current_user',
 
     /**
-     * 1. Fungsi Login (Dijalankan dari halaman index.html)
+     * 1. Fungsi Login (Dijalankan dari halaman login.html)
      * Mengambil ID User dari form, merekam di localStorage, dan me-redirect ke folder yang tepat.
      */
     login: function (userObject) {
@@ -40,7 +40,7 @@ const AuthEngine = {
 
     /**
      * 2. Fungsi Logout
-     * Membersihkan localStorage dan menendang user kembali ke pintu gerbang (index.html)
+     * Membersihkan localStorage dan menendang user kembali ke pintu gerbang (login.html)
      */
     logout: function () {
         const user = this.getCurrentUser();
@@ -50,10 +50,10 @@ const AuthEngine = {
 
         localStorage.removeItem(this.SESSION_KEY);
 
-        // Kalkulasi path mundur untuk kembali ke index.html
+        // Kalkulasi path mundur untuk kembali ke login.html
         // Karena logout bisa dipanggil dari dalam folder role (misal /pegawai/dashboard.html)
         const inSubFolder = window.location.pathname.split('/').length > 2;
-        window.location.href = inSubFolder ? '../index.html' : 'index.html';
+        window.location.href = inSubFolder ? '../login.html' : 'login.html';
     },
 
     /**
@@ -76,12 +76,12 @@ const AuthEngine = {
 
         // Jika user belum login dan BUKAN berada di halaman index/login, tendang ke index
         if (!user) {
-            if (!currentPath.endsWith('index.html') && !currentPath.endsWith('/')) {
+            if (!currentPath.endsWith('login.html') && !currentPath.endsWith('/')) {
                 alert('Sesi anda telah habis atau belum login. Silahkan login kembali.');
                 // Hitung kedalaman folder untuk redirect yang tepat
-                window.location.href = currentPath.includes('/admin/') || currentPath.includes('/kadis/') || currentPath.includes('/penilai/') || currentPath.includes('/pegawai/') ? '../index.html' : 'index.html';
+                window.location.href = currentPath.includes('/admin/') || currentPath.includes('/kadis/') || currentPath.includes('/penilai/') || currentPath.includes('/pegawai/') ? '../login.html' : 'login.html';
             }
-            return; // Hentikan eksekusi jika di index.html
+            return; // Hentikan eksekusi jika di login.html
         }
 
         // --- Aturan Isolasi Folder Berdasarkan Role ---

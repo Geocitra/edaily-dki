@@ -1,110 +1,489 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - E-Daily Report Pemprov DKI Jakarta</title>
+    <title>E-Daily Report | Bapenda DKI Jakarta</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
     <script>
         tailwind.config = {
             theme: {
-                extend: { colors: { dki: { primary: '#1e3a8a', accent: '#f97316', dark: '#0f172a' } } }
+                extend: {
+                    colors: {
+                        dki: {
+                            900: '#0F172A', // Slate 900 (Deep Navy untuk kesan ASN Profesional)
+                            800: '#1E293B', // Slate 800
+                            light: '#F8FAFC', // Sangat bersih
+                            orange: '#F97316', // Orange khas Jakarta / JakLingko
+                            accent: '#0EA5E9', // Sky Blue Smart City
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 40px -15px rgba(0,0,0,0.05)',
+                        'glow-orange': '0 0 25px rgba(249, 115, 22, 0.4)',
+                    }
+                }
             }
         }
     </script>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .bg-mesh-dark {
+            background-color: #0F172A;
+            background-image: radial-gradient(at 100% 0%, rgba(249, 115, 22, 0.12) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
+        }
+
+        .leaflet-container {
+            font-family: 'Inter', sans-serif;
+            z-index: 10;
+            background-color: #E2E8F0 !important;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+            border: 1px solid #E2E8F0;
+        }
+    </style>
 </head>
 
-<body class="bg-slate-50 h-screen flex overflow-hidden">
+<body class="text-slate-600 font-sans antialiased selection:bg-dki-orange selection:text-white">
 
-    <div class="hidden lg:flex lg:w-1/2 relative bg-dki-dark overflow-hidden">
-        <div id="login-slider" class="flex w-full h-full transition-transform duration-1000 ease-in-out">
-            <img src="assets/img/dki-1.png" class="w-full h-full object-cover flex-shrink-0 opacity-80" alt="DKI 1">
-            <img src="assets/img/dki-2.png" class="w-full h-full object-cover flex-shrink-0 opacity-80" alt="DKI 2">
-            <img src="assets/img/dki-3.png" class="w-full h-full object-cover flex-shrink-0 opacity-80" alt="DKI 3">
-        </div>
-        <div
-            class="absolute inset-0 bg-gradient-to-t from-dki-dark/90 via-transparent to-transparent flex flex-col justify-end p-12">
-            <img src="assets/img/dki.png" class="h-20 w-auto mb-6 drop-shadow-lg object-contain" alt="Logo DKI"
-                style="align-self: flex-start;">
-            <h1 class="text-4xl font-bold text-white mb-2 leading-tight">Transformasi Kinerja<br>Aparatur Sipil Negara
-            </h1>
-            <p class="text-slate-300 text-lg">Sistem Pelaporan Kinerja Harian (E-Daily Report) Terintegrasi Pemerintah
-                Provinsi DKI Jakarta.</p>
-        </div>
-    </div>
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 glass-nav top-0 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo DKI -->
+                <div class="flex items-center gap-4 cursor-pointer group">
+                    <div
+                        class="w-10 h-10 flex items-center justify-center p-1 bg-white rounded-full shadow-glow-orange">
+                        <img src="./assets/img/dki.png" alt="Logo Pemprov DKI" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-heading font-extrabold tracking-tight text-white leading-none">Bapenda
+                            <span class="text-dki-orange">DKI</span></span>
+                        <span class="text-[10px] text-slate-300 font-semibold uppercase tracking-widest mt-1">E-Daily
+                            Report</span>
+                    </div>
+                </div>
 
-    <div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 sm:p-16 bg-white overflow-y-auto">
-        <div class="w-full max-w-md fade-in">
-            <div class="text-center mb-10 lg:hidden">
-                <img src="assets/img/dki.png" class="h-20 mx-auto mb-4" alt="Logo DKI">
-                <h2 class="text-2xl font-bold text-dki-primary">E-Daily Report</h2>
-                <p class="text-slate-500">Pemprov DKI Jakarta</p>
+                <!-- Menu Center -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Modul ASN</a>
+                    <a href="#map-section"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Pusdatin
+                        Center</a>
+                    <a href="#roles"
+                        class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Struktural</a>
+                </div>
+
+                <!-- CTA Right -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="login.html"
+                        class="px-6 py-2.5 rounded-full bg-dki-orange text-white font-bold text-sm hover:bg-[#E06512] transition-all shadow-glow-orange">
+                        Portal Pegawai
+                    </a>
+                </div>
             </div>
+        </div>
+    </nav>
 
-            <h2 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang Kembali</h2>
-            <p class="text-slate-500 mb-8">Pilih role (hak akses) di bawah ini untuk memulai sesi simulasi Anda.</p>
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden bg-mesh-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
-            <div class="space-y-4" id="role-buttons">
+                <!-- Hero Copy -->
+                <div class="max-w-2xl">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-dki-orange/10 border border-dki-orange/20 mb-6">
+                        <span class="w-2 h-2 rounded-full bg-dki-orange animate-pulse"></span>
+                        <span class="text-dki-orange text-xs font-bold uppercase tracking-wider">Jakarta Smart City
+                            Hub</span>
+                    </div>
+
+                    <h1 class="text-5xl lg:text-6xl font-heading font-black leading-[1.15] mb-6 text-white">
+                        Sinergi Kinerja.<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-dki-orange to-[#FF9D4A]">Pajak
+                            Daerah Maksimal.</span>
+                    </h1>
+
+                    <p class="text-lg text-slate-400 mb-10 leading-relaxed">
+                        Transformasi digital akuntabilitas ASN. Sistem pemantauan Laporan Kinerja Harian (LKH)
+                        terintegrasi koordinat spasial untuk Satgas Pajak Lapangan, Suku Badan, dan Pusdatin.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-4">
+                        <a href="#map-section"
+                            class="px-8 py-4 rounded-xl bg-dki-accent text-white font-semibold hover:bg-blue-500 transition-all shadow-[0_0_20px_rgba(14,165,233,0.4)]">
+                            Peta Live Aktivitas
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hero Visual (Image Collage DKI) -->
+                <div class="relative hidden lg:block w-full max-w-lg mx-auto pl-4">
+                    <div
+                        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-dki-orange/20 blur-[100px] rounded-full pointer-events-none z-0">
+                    </div>
+
+                    <div
+                        class="grid grid-cols-2 gap-4 relative z-10 transform -rotate-2 hover:rotate-0 transition-all duration-700 ease-out">
+
+                        <!-- Image 1 -->
+                        <div
+                            class="relative rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10 h-48 transform translate-y-8 bg-dki-800 group">
+                            <div
+                                class="absolute inset-0 bg-dki-900/30 group-hover:bg-transparent transition-colors duration-500 z-10">
+                            </div>
+                            <img src="./assets/img/dki-1.png" alt="Aktivitas Lapangan 1"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        </div>
+
+                        <!-- Image 2 -->
+                        <div
+                            class="relative rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10 h-48 bg-dki-800 group">
+                            <div
+                                class="absolute inset-0 bg-dki-900/30 group-hover:bg-transparent transition-colors duration-500 z-10">
+                            </div>
+                            <img src="./assets/img/dki-2.png" alt="Aktivitas Lapangan 2"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        </div>
+
+                        <!-- Image 3 (Lebar) -->
+                        <div
+                            class="relative col-span-2 rounded-2xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-white/10 h-56 mt-2 bg-dki-800 group">
+                            <div
+                                class="absolute inset-0 bg-dki-900/20 group-hover:bg-transparent transition-colors duration-500 z-10">
+                            </div>
+                            <img src="./assets/img/dki-3.png" alt="Dashboard View"
+                                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                                style="object-position: center;">
+                        </div>
+                    </div>
+                </div>
+
             </div>
+        </div>
+    </section>
 
-            <div
-                class="mt-10 flex items-center justify-center gap-2 text-sm text-emerald-600 bg-emerald-50 py-2 rounded-lg border border-emerald-100">
-                <span class="relative flex h-3 w-3">
+    <!-- Map Section (Pusdatin Command Center) -->
+    <section id="map-section" class="py-24 bg-dki-light border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="mb-12 md:flex justify-between items-end">
+                <div class="max-w-2xl">
                     <span
-                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                </span>
-                Engine Database Mockup Ready
+                        class="text-dki-accent font-bold text-sm tracking-widest uppercase mb-2 block flex items-center gap-2">
+                        <i class="fa-solid fa-satellite-dish"></i> Pusdatin Command Center
+                    </span>
+                    <h2 class="text-3xl lg:text-4xl font-heading font-bold text-dki-900 mb-4">Pemetaan Audit Lapangan
+                    </h2>
+                    <p class="text-slate-600">Pemantauan visual posisi pegawai saat melakukan tugas WFO, WFH, maupun
+                        dinas luar (Audit Wajib Pajak, Reklame, dll). Data ditarik *real-time* dari Database LKH.</p>
+                </div>
+
+                <div class="mt-6 md:mt-0 flex gap-4">
+                    <div
+                        class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        <span class="text-sm font-semibold text-slate-700">Disetujui</span>
+                    </div>
+                    <div class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                        <span class="text-sm font-semibold text-slate-700">Direview</span>
+                    </div>
+                    <div
+                        class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                        <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+                        <span class="text-sm font-semibold text-slate-700">Ditolak</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-4 gap-6">
+                <!-- Stats Sidebar -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-soft">
+                        <div
+                            class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-dki-orange mb-4">
+                            <i class="fa-solid fa-file-signature text-xl"></i>
+                        </div>
+                        <div class="text-sm text-slate-500 font-medium mb-1">Total LKH Masuk</div>
+                        <div class="text-4xl font-heading font-black text-dki-900" id="stat-total">--</div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-soft">
+                        <h4 class="font-heading font-bold text-dki-900 mb-4">Status Verifikasi</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="font-medium text-slate-600">Disetujui Kasi/Kasuban</span>
+                                    <span class="font-bold text-dki-900" id="stat-approve">--</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                    <div id="bar-approve" class="bg-emerald-500 h-2 rounded-full" style="width: 0%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="font-medium text-slate-600">Menunggu Review</span>
+                                    <span class="font-bold text-dki-900" id="stat-pending">--</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                    <div id="bar-pending" class="bg-amber-500 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Container -->
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-2xl p-2 border border-slate-200 shadow-soft h-full min-h-[500px]">
+                        <div id="osm-map" class="w-full h-full rounded-xl z-10"></div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <script src="assets/js/db-mock.js"></script>
-    <script src="assets/js/auth.js"></script>
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-heading font-bold text-dki-900 mb-4">Arsitektur Pengawasan Bapenda</h2>
+                <p class="text-slate-600">Dirancang khusus menanggulangi kompleksitas pekerjaan ASN Pemprov DKI, dari
+                    staf IT internal hingga satgas penagihan pajak di lapangan.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div
+                    class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-dki-orange">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-orange-100 flex items-center justify-center mb-6 text-dki-orange transition-all">
+                        <i class="fa-solid fa-location-crosshairs text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-heading font-bold text-dki-900 mb-3">Anti Fake-GPS Satgas</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Ekstraksi koordinat ketat yang memblokir aplikasi
+                        lokasi palsu. Memastikan laporan audit pajak restoran atau reklame benar-benar dilakukan di
+                        lokasi Wajib Pajak.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div
+                    class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-dki-accent">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-sky-100 flex items-center justify-center mb-6 text-dki-accent transition-all">
+                        <i class="fa-solid fa-file-contract text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-heading font-bold text-dki-900 mb-3">Integrasi SKP Tahunan</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Aktivitas LKH yang di-input wajib merujuk pada
+                        turunan Sasaran Kinerja Pegawai (SKP). Mempermudah penilaian angka kredit dan TPP tiap akhir
+                        bulan.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div
+                    class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-emerald-500">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center mb-6 text-emerald-600 transition-all">
+                        <i class="fa-solid fa-sitemap text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-heading font-bold text-dki-900 mb-3">Approval Struktural Berjenjang</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Sistem mengenali hierarki instansi. Laporan staf
+                        divalidasi oleh Kasi, dan rekap Kasi akan dimonitor langsung oleh Kasuban atau Kaban.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roles / Matriks Akses -->
+    <section id="roles" class="py-24 bg-dki-900 text-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5">
+                    <span class="text-dki-orange font-bold text-sm tracking-widest uppercase mb-2 block">Hak Akses
+                        Sistem</span>
+                    <h2 class="text-3xl font-heading font-bold mb-6 leading-tight">Mendukung Seluruh<br>Hierarki
+                        Bapenda.</h2>
+                    <p class="text-slate-400 mb-8 leading-relaxed">UI/UX dashboard menyesuaikan *Role* login. Dari
+                        Kepala Badan yang membutuhkan rekapitulasi utuh, hingga staf yang butuh form input cepat.</p>
+                </div>
+
+                <div class="lg:col-span-7 grid sm:grid-cols-2 gap-4">
+                    <!-- Role Card 1 -->
+                    <div class="p-6 rounded-xl bg-white/5 border border-white/10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <h4 class="font-heading font-bold">ASN Pelaksana</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-400">
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2 text-xs"></i> Pengisian LKH
+                                (WFO/WFH/Luar)</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2 text-xs"></i> Pantau jam kerja SKP
+                                personal</li>
+                        </ul>
+                    </div>
+
+                    <!-- Role Card 2 -->
+                    <div class="p-6 rounded-xl bg-white/5 border border-white/10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-dki-accent/20 flex items-center justify-center text-dki-accent">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                            <h4 class="font-heading font-bold">Pejabat Penilai (Kasi)</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-400">
+                            <li><i class="fa-solid fa-check text-dki-accent mr-2 text-xs"></i> Verifikasi/Reject LKH
+                                Bawahan</li>
+                            <li><i class="fa-solid fa-check text-dki-accent mr-2 text-xs"></i> Lacak koordinat anomali
+                                tim</li>
+                        </ul>
+                    </div>
+
+                    <!-- Role Card 3 (Full width) -->
+                    <div class="p-6 rounded-xl bg-dki-orange/10 border border-dki-orange/30 sm:col-span-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-dki-orange/30 flex items-center justify-center text-dki-orange">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                            <h4 class="font-heading font-bold">Pimpinan (Kaban / Kasuban)</h4>
+                        </div>
+                        <div class="grid sm:grid-cols-2 gap-2 text-sm text-slate-300">
+                            <div><i class="fa-solid fa-check text-dki-orange mr-2 text-xs"></i> Dashboard Analitik Makro
+                            </div>
+                            <div><i class="fa-solid fa-check text-dki-orange mr-2 text-xs"></i> Broadscast Pengumuman
+                                Instansi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 bg-[#0A0F1C] border-t border-slate-800">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3 opacity-60">
+                <img src="./assets/img/dki.png" alt="Logo DKI" class="h-8 w-auto grayscale">
+                <div class="flex flex-col">
+                    <span class="text-sm font-heading font-bold text-slate-400">Badan Pendapatan Daerah</span>
+                    <span class="text-[10px] text-slate-500">Pemerintah Provinsi DKI Jakarta</span>
+                </div>
+            </div>
+            <p class="text-slate-600 text-sm font-medium">&copy; 2026 Pusdatin Bapenda DKI Jakarta.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="./assets/js/db-mock.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Slider Logic
-            let slideIndex = 0;
-            setInterval(() => {
-                slideIndex = (slideIndex + 1) % 3;
-                document.getElementById('login-slider').style.transform = `translateX(-${slideIndex * 100}%)`;
-            }, 5000);
+            // Inisialisasi Peta Leaflet (Fokus di Balaikota / Monas Jakarta)
+            const map = L.map('osm-map', { zoomControl: false }).setView([-6.1824, 106.8291], 11);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-            // Redirect jika sudah login
-            const currentUser = AuthEngine.getCurrentUser();
-            if (currentUser) {
-                const routes = { 'ADMIN': 'admin/', 'KADIS': 'kadis/', 'PENILAI': 'penilai/', 'PEGAWAI': 'pegawai/' };
-                if (routes[currentUser.role]) window.location.href = routes[currentUser.role] + 'dashboard.html';
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Fetch Data dari db-mock.js (MockDB DKI)
+            if (typeof MockDB !== 'undefined') {
+                MockDB.init();
+                const allLkh = MockDB.getLkh();
+                const agregat = MockDB.getAgregatDinas();
+
+                // Update UI Stats
+                document.getElementById('stat-total').innerText = agregat.total;
+                document.getElementById('stat-approve').innerText = agregat.approved;
+                document.getElementById('stat-pending').innerText = agregat.pending;
+
+                // Hitung lebar progress bar
+                if (agregat.total > 0) {
+                    document.getElementById('bar-approve').style.width = `${(agregat.approved / agregat.total) * 100}%`;
+                    document.getElementById('bar-pending').style.width = `${(agregat.pending / agregat.total) * 100}%`;
+                }
+
+                // Gambar titik di Peta
+                allLkh.forEach(lkh => {
+                    if (!lkh.lat || !lkh.lng) return;
+
+                    // Dapatkan nama pegawai dari MockDB users
+                    const user = MockDB.getUserById(lkh.user_id);
+                    const employeeName = user ? user.name : 'ASN Pemprov';
+                    const employeeJabatan = user ? user.role : '';
+
+                    // Warna Indikator berdasarkan Status LKH
+                    let dotColor = '#0EA5E9'; // Biru (Pending default)
+                    if (lkh.status === 'APPROVED') dotColor = '#10B981'; // Hijau Selesai
+                    if (lkh.status === 'REJECTED') dotColor = '#F43F5E'; // Merah Ditolak/Anomali
+                    if (lkh.status === 'PENDING') dotColor = '#F59E0B';  // Amber
+
+                    const marker = L.circleMarker([lkh.lat, lkh.lng], {
+                        radius: 8,
+                        fillColor: dotColor,
+                        color: '#ffffff',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.95
+                    }).addTo(map);
+
+                    // Desain Popup Peta
+                    marker.bindPopup(`
+                        <div style="min-width: 220px; font-family: 'Inter', sans-serif;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <span style="font-size: 10px; color: #64748B; font-weight: 700;">${lkh.id}</span>
+                                <span style="background-color: #F1F5F9; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">MODE: ${lkh.lokasi_mode}</span>
+                            </div>
+                            <div style="font-size: 14px; font-weight: 700; color: #0F172A; font-family: 'Plus Jakarta Sans', sans-serif;">${employeeName}</div>
+                            <div style="font-size: 11px; color: #0EA5E9; margin-bottom: 8px; font-weight: 600;">${employeeJabatan}</div>
+                            
+                            <div style="font-size: 12px; color: #475569; margin-bottom: 12px; line-height: 1.4; padding-left: 8px; border-left: 2px solid ${dotColor};">${lkh.aktivitas}</div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E2E8F0; padding-top: 10px;">
+                                <span style="font-size: 11px; font-weight: 500; color: #64748B;">
+                                    <i class="fa-regular fa-clock"></i> ${lkh.waktu_menit} Menit
+                                </span>
+                                <span style="background-color: ${dotColor}15; color: ${dotColor}; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px;">
+                                    ${lkh.status}
+                                </span>
+                            </div>
+                        </div>
+                    `);
+                });
+            } else {
+                console.error("MockDB tidak ditemukan. Pastikan file ./assets/js/db-mock.js dimuat dengan benar.");
             }
-
-            // Generate Tombol Role
-            const users = MockDB.getUsers();
-            const container = document.getElementById('role-buttons');
-            const presentasiUsers = [
-                users.find(u => u.role === 'ADMIN'),
-                users.find(u => u.role === 'KADIS'),
-                users.find(u => u.id === 'U04'), // Kasi
-                users.find(u => u.id === 'U08')  // Staf
-            ];
-
-            presentasiUsers.forEach(user => {
-                if (!user) return;
-                const btn = document.createElement('button');
-                btn.className = 'w-full flex flex-col items-center justify-center p-4 border-2 border-slate-200 rounded-xl hover:border-dki-accent hover:bg-orange-50 transition-all duration-200 group';
-
-                let roleLabel = user.role === 'ADMIN' ? "Administrator Sistem" :
-                    user.role === 'KADIS' ? "Kepala Dinas (Top Level)" :
-                        user.role === 'PENILAI' ? "Atasan / Penilai LKH" : "Pegawai / Staf Pelapor";
-
-                btn.innerHTML = `
-                    <strong class="text-lg text-dki-primary group-hover:text-dki-accent transition-colors">${roleLabel}</strong>
-                    <span class="text-sm text-slate-500 mt-1">Login sbg: ${user.name}</span>
-                `;
-                btn.onclick = () => AuthEngine.login(user);
-                container.appendChild(btn);
-            });
         });
     </script>
 </body>
