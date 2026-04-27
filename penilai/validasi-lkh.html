@@ -209,7 +209,10 @@
                 const staf = dbData.users.find(u => u.id === l.user_id);
                 const skp = dbData.skp.find(s => s.id === l.skp_id);
 
-                let iconColor = l.lokasi_mode === 'WFO' ? 'bg-dki-primary' : (l.lokasi_mode === 'WFH' ? 'bg-emerald-500' : 'bg-rose-500');
+                // LOGIKA WARNA DIPERBARUI UNTUK MENDUKUNG WFA
+                let iconColor = l.lokasi_mode === 'WFO' ? 'bg-dki-primary' :
+                    (l.lokasi_mode === 'WFH' ? 'bg-emerald-500' :
+                        (l.lokasi_mode === 'WFA' ? 'bg-purple-500' : 'bg-rose-500'));
 
                 return `
                     <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden transform transition-all hover:shadow-2xl" id="card-${l.id}">

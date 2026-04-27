@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Daily Report | Bapenda DKI Jakarta</title>
+    <title>E-Daily Report | Pemprov DKI Jakarta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link
@@ -66,25 +66,24 @@
 
 <body class="text-slate-600 font-sans antialiased selection:bg-dki-orange selection:text-white">
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 transition-all duration-300 glass-nav top-0 border-b border-white/10">
+    <nav class="fixed w-full z-50 transition-all duration-300 glass-nav top-0 border-b border-white/10 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <!-- Logo DKI -->
-                <div class="flex items-center gap-4 cursor-pointer group">
+                <div class="flex items-center gap-3 sm:gap-4 cursor-pointer group">
                     <div
-                        class="w-10 h-10 flex items-center justify-center p-1 bg-white rounded-full shadow-glow-orange">
+                        class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center p-1 bg-white rounded-full shadow-glow-orange shrink-0">
                         <img src="./assets/img/dki.png" alt="Logo Pemprov DKI" class="w-full h-full object-contain">
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-xl font-heading font-extrabold tracking-tight text-white leading-none">Bapenda
+                        <span
+                            class="text-lg sm:text-xl font-heading font-extrabold tracking-tight text-white leading-none">Pemprov
                             <span class="text-dki-orange">DKI</span></span>
-                        <span class="text-[10px] text-slate-300 font-semibold uppercase tracking-widest mt-1">E-Daily
+                        <span
+                            class="text-[9px] sm:text-[10px] text-slate-300 font-semibold uppercase tracking-widest mt-1">E-Daily
                             Report</span>
                     </div>
                 </div>
 
-                <!-- Menu Center -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#features"
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Modul ASN</a>
@@ -95,24 +94,49 @@
                         class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Struktural</a>
                 </div>
 
-                <!-- CTA Right -->
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="login.html"
                         class="px-6 py-2.5 rounded-full bg-dki-orange text-white font-bold text-sm hover:bg-[#E06512] transition-all shadow-glow-orange">
                         Demo
                     </a>
                 </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn"
+                        class="text-white hover:text-dki-orange focus:outline-none p-2 transition-colors">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu"
+            class="hidden md:hidden absolute top-20 left-0 w-full glass-nav border-b border-white/10 shadow-2xl transition-all duration-300 origin-top">
+            <div class="px-4 pt-4 pb-6 space-y-3 flex flex-col">
+                <a href="#features"
+                    class="block px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 mobile-link">Modul
+                    ASN</a>
+                <a href="#map-section"
+                    class="block px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 mobile-link">Pusdatin
+                    Center</a>
+                <a href="#roles"
+                    class="block px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 mobile-link">Struktural</a>
+
+                <div class="h-px bg-white/10 w-full my-2"></div>
+
+                <a href="login.html"
+                    class="block w-full text-center px-6 py-3.5 rounded-xl bg-dki-orange text-white font-bold text-sm hover:bg-[#E06512] transition-all shadow-glow-orange">
+                    Demo Login
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden bg-mesh-dark">
+    <section class="relative pt-28 pb-16 md:pt-32 md:pb-20 lg:pt-40 lg:pb-28 overflow-hidden bg-mesh-dark">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
-                <!-- Hero Copy -->
-                <div class="max-w-2xl">
+                <div class="max-w-2xl text-center lg:text-left mx-auto lg:mx-0 mt-8 md:mt-0">
                     <div
                         class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-dki-orange/10 border border-dki-orange/20 mb-6">
                         <span class="w-2 h-2 rounded-full bg-dki-orange animate-pulse"></span>
@@ -120,26 +144,26 @@
                             Hub</span>
                     </div>
 
-                    <h1 class="text-5xl lg:text-6xl font-heading font-black leading-[1.15] mb-6 text-white">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-heading font-black leading-[1.15] mb-6 text-white">
                         Sinergi Kinerja.<br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-dki-orange to-[#FF9D4A]">Pajak
                             Daerah Maksimal.</span>
                     </h1>
 
-                    <p class="text-lg text-slate-400 mb-10 leading-relaxed">
+                    <p
+                        class="text-base sm:text-lg text-slate-400 mb-8 sm:mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0">
                         Transformasi digital akuntabilitas ASN. Sistem pemantauan Laporan Kinerja Harian (LKH)
                         terintegrasi koordinat spasial untuk Satgas Pajak Lapangan, Suku Badan, dan Pusdatin.
                     </p>
 
-                    <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                         <a href="#map-section"
-                            class="px-8 py-4 rounded-xl bg-dki-accent text-white font-semibold hover:bg-blue-500 transition-all shadow-[0_0_20px_rgba(14,165,233,0.4)]">
+                            class="w-full sm:w-auto px-8 py-4 rounded-xl bg-dki-accent text-white font-semibold hover:bg-blue-500 transition-all shadow-[0_0_20px_rgba(14,165,233,0.4)] text-center">
                             Peta Live Aktivitas
                         </a>
                     </div>
                 </div>
 
-                <!-- Hero Visual (Image Collage DKI) -->
                 <div class="relative hidden lg:block w-full max-w-lg mx-auto pl-4">
                     <div
                         class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-dki-orange/20 blur-[100px] rounded-full pointer-events-none z-0">
@@ -148,7 +172,6 @@
                     <div
                         class="grid grid-cols-2 gap-4 relative z-10 transform -rotate-2 hover:rotate-0 transition-all duration-700 ease-out">
 
-                        <!-- Image 1 -->
                         <div
                             class="relative rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10 h-48 transform translate-y-8 bg-dki-800 group">
                             <div
@@ -158,7 +181,6 @@
                                 class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
                         </div>
 
-                        <!-- Image 2 -->
                         <div
                             class="relative rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10 h-48 bg-dki-800 group">
                             <div
@@ -168,7 +190,6 @@
                                 class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
                         </div>
 
-                        <!-- Image 3 (Lebar) -->
                         <div
                             class="relative col-span-2 rounded-2xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-white/10 h-56 mt-2 bg-dki-800 group">
                             <div
@@ -185,82 +206,85 @@
         </div>
     </section>
 
-    <!-- Map Section (Pusdatin Command Center) -->
-    <section id="map-section" class="py-24 bg-dki-light border-y border-slate-200">
+    <section id="map-section" class="py-16 md:py-24 bg-dki-light border-y border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="mb-12 md:flex justify-between items-end">
-                <div class="max-w-2xl">
+            <div class="mb-10 md:mb-12 md:flex justify-between items-end gap-6">
+                <div class="max-w-2xl text-center md:text-left mx-auto md:mx-0">
                     <span
-                        class="text-dki-accent font-bold text-sm tracking-widest uppercase mb-2 block flex items-center gap-2">
+                        class="text-dki-accent font-bold text-xs sm:text-sm tracking-widest uppercase mb-2 flex items-center justify-center md:justify-start gap-2">
                         <i class="fa-solid fa-satellite-dish"></i> Pusdatin Command Center
                     </span>
-                    <h2 class="text-3xl lg:text-4xl font-heading font-bold text-dki-900 mb-4">Pemetaan Audit Lapangan
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-bold text-dki-900 mb-4">Pemetaan Audit
+                        Lapangan
                     </h2>
-                    <p class="text-slate-600">Pemantauan visual posisi pegawai saat melakukan tugas WFO, WFH, maupun
+                    <p class="text-sm sm:text-base text-slate-600">Pemantauan visual posisi pegawai saat melakukan tugas
+                        WFO, WFH, maupun
                         dinas luar (Audit Wajib Pajak, Reklame, dll). Data ditarik *real-time* dari Database LKH.</p>
                 </div>
 
-                <div class="mt-6 md:mt-0 flex gap-4">
+                <div class="mt-6 md:mt-0 flex flex-wrap justify-center md:justify-end gap-3 sm:gap-4 shrink-0">
                     <div
-                        class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                        <span class="text-sm font-semibold text-slate-700">Disetujui</span>
+                        class="bg-white px-3 py-2 sm:px-5 sm:py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2 sm:gap-3">
+                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-emerald-500"></div>
+                        <span class="text-xs sm:text-sm font-semibold text-slate-700">Disetujui</span>
                     </div>
                     <div
-                        class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                        <span class="text-sm font-semibold text-slate-700">Direview</span>
+                        class="bg-white px-3 py-2 sm:px-5 sm:py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2 sm:gap-3">
+                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-amber-500"></div>
+                        <span class="text-xs sm:text-sm font-semibold text-slate-700">Direview</span>
                     </div>
                     <div
-                        class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-rose-500"></div>
-                        <span class="text-sm font-semibold text-slate-700">Ditolak</span>
+                        class="bg-white px-3 py-2 sm:px-5 sm:py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2 sm:gap-3">
+                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-rose-500"></div>
+                        <span class="text-xs sm:text-sm font-semibold text-slate-700">Ditolak</span>
                     </div>
                 </div>
             </div>
 
             <div class="grid lg:grid-cols-4 gap-6">
-                <!-- Stats Sidebar -->
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-soft">
+                <div class="lg:col-span-1 space-y-4 sm:space-y-6">
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-soft">
                         <div
-                            class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-dki-orange mb-4">
-                            <i class="fa-solid fa-file-signature text-xl"></i>
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-orange-50 flex items-center justify-center text-dki-orange mb-3 sm:mb-4">
+                            <i class="fa-solid fa-file-signature text-lg sm:text-xl"></i>
                         </div>
-                        <div class="text-sm text-slate-500 font-medium mb-1">Total LKH Masuk</div>
-                        <div class="text-4xl font-heading font-black text-dki-900" id="stat-total">--</div>
+                        <div class="text-xs sm:text-sm text-slate-500 font-medium mb-1">Total LKH Masuk</div>
+                        <div class="text-3xl sm:text-4xl font-heading font-black text-dki-900" id="stat-total">--</div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-soft">
-                        <h4 class="font-heading font-bold text-dki-900 mb-4">Status Verifikasi</h4>
-                        <div class="space-y-4">
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-soft">
+                        <h4 class="font-heading font-bold text-dki-900 mb-3 sm:mb-4 text-sm sm:text-base">Status
+                            Verifikasi</h4>
+                        <div class="space-y-3 sm:space-y-4">
                             <div>
-                                <div class="flex justify-between text-sm mb-1">
+                                <div class="flex justify-between text-xs sm:text-sm mb-1">
                                     <span class="font-medium text-slate-600">Disetujui Kasi/Kasuban</span>
                                     <span class="font-bold text-dki-900" id="stat-approve">--</span>
                                 </div>
-                                <div class="w-full bg-slate-100 rounded-full h-2">
-                                    <div id="bar-approve" class="bg-emerald-500 h-2 rounded-full" style="width: 0%">
+                                <div class="w-full bg-slate-100 rounded-full h-1.5 sm:h-2">
+                                    <div id="bar-approve" class="bg-emerald-500 h-1.5 sm:h-2 rounded-full"
+                                        style="width: 0%">
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <div class="flex justify-between text-sm mb-1">
+                                <div class="flex justify-between text-xs sm:text-sm mb-1">
                                     <span class="font-medium text-slate-600">Menunggu Review</span>
                                     <span class="font-bold text-dki-900" id="stat-pending">--</span>
                                 </div>
-                                <div class="w-full bg-slate-100 rounded-full h-2">
-                                    <div id="bar-pending" class="bg-amber-500 h-2 rounded-full" style="width: 0%"></div>
+                                <div class="w-full bg-slate-100 rounded-full h-1.5 sm:h-2">
+                                    <div id="bar-pending" class="bg-amber-500 h-1.5 sm:h-2 rounded-full"
+                                        style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Map Container -->
-                <div class="lg:col-span-3">
-                    <div class="bg-white rounded-2xl p-2 border border-slate-200 shadow-soft h-full min-h-[500px]">
+                <div class="lg:col-span-3 h-full">
+                    <div
+                        class="bg-white rounded-2xl p-1.5 sm:p-2 border border-slate-200 shadow-soft h-[400px] md:h-[500px] lg:h-full lg:min-h-[500px]">
                         <div id="osm-map" class="w-full h-full rounded-xl z-10"></div>
                     </div>
                 </div>
@@ -268,118 +292,133 @@
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features" class="py-24 bg-white">
+    <section id="features" class="py-16 md:py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl font-heading font-bold text-dki-900 mb-4">Arsitektur Pengawasan Bapenda</h2>
-                <p class="text-slate-600">Dirancang khusus menanggulangi kompleksitas pekerjaan ASN Pemprov DKI, dari
+            <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+                <h2 class="text-2xl sm:text-3xl font-heading font-bold text-dki-900 mb-3 sm:mb-4">Arsitektur Pengawasan
+                    Pemprov DKI</h2>
+                <p class="text-sm sm:text-base text-slate-600">Dirancang khusus menanggulangi kompleksitas pekerjaan ASN
+                    Pemprov DKI, dari
                     staf IT internal hingga satgas penagihan pajak di lapangan.</p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
                 <div
-                    class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-dki-orange">
+                    class="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-dki-orange">
                     <div
-                        class="w-14 h-14 rounded-xl bg-orange-100 flex items-center justify-center mb-6 text-dki-orange transition-all">
-                        <i class="fa-solid fa-location-crosshairs text-2xl"></i>
+                        class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-orange-100 flex items-center justify-center mb-4 md:mb-6 text-dki-orange transition-all">
+                        <i class="fa-solid fa-location-crosshairs text-xl md:text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-heading font-bold text-dki-900 mb-3">Anti Fake-GPS Satgas</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed">Ekstraksi koordinat ketat yang memblokir aplikasi
+                    <h3 class="text-lg md:text-xl font-heading font-bold text-dki-900 mb-2 md:mb-3">Anti Fake-GPS Satgas
+                    </h3>
+                    <p class="text-xs md:text-sm text-slate-600 leading-relaxed">Ekstraksi koordinat ketat yang
+                        memblokir aplikasi
                         lokasi palsu. Memastikan laporan audit pajak restoran atau reklame benar-benar dilakukan di
                         lokasi Wajib Pajak.</p>
                 </div>
 
-                <!-- Feature 2 -->
                 <div
-                    class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-dki-accent">
+                    class="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-dki-accent">
                     <div
-                        class="w-14 h-14 rounded-xl bg-sky-100 flex items-center justify-center mb-6 text-dki-accent transition-all">
-                        <i class="fa-solid fa-file-contract text-2xl"></i>
+                        class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-sky-100 flex items-center justify-center mb-4 md:mb-6 text-dki-accent transition-all">
+                        <i class="fa-solid fa-file-contract text-xl md:text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-heading font-bold text-dki-900 mb-3">Integrasi SKP Tahunan</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed">Aktivitas LKH yang di-input wajib merujuk pada
+                    <h3 class="text-lg md:text-xl font-heading font-bold text-dki-900 mb-2 md:mb-3">Integrasi SKP
+                        Tahunan</h3>
+                    <p class="text-xs md:text-sm text-slate-600 leading-relaxed">Aktivitas LKH yang di-input wajib
+                        merujuk pada
                         turunan Sasaran Kinerja Pegawai (SKP). Mempermudah penilaian angka kredit dan TPP tiap akhir
                         bulan.</p>
                 </div>
 
-                <!-- Feature 3 -->
                 <div
-                    class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-emerald-500">
+                    class="p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-soft transition-all group border-b-4 border-b-transparent hover:border-b-emerald-500 sm:col-span-2 md:col-span-1">
                     <div
-                        class="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center mb-6 text-emerald-600 transition-all">
-                        <i class="fa-solid fa-sitemap text-2xl"></i>
+                        class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-emerald-100 flex items-center justify-center mb-4 md:mb-6 text-emerald-600 transition-all">
+                        <i class="fa-solid fa-sitemap text-xl md:text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-heading font-bold text-dki-900 mb-3">Approval Struktural Berjenjang</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed">Sistem mengenali hierarki instansi. Laporan staf
+                    <h3 class="text-lg md:text-xl font-heading font-bold text-dki-900 mb-2 md:mb-3">Approval Struktural
+                        Berjenjang</h3>
+                    <p class="text-xs md:text-sm text-slate-600 leading-relaxed">Sistem mengenali hierarki instansi.
+                        Laporan staf
                         divalidasi oleh Kasi, dan rekap Kasi akan dimonitor langsung oleh Kasuban atau Kaban.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Roles / Matriks Akses -->
-    <section id="roles" class="py-24 bg-dki-900 text-white relative">
+    <section id="roles" class="py-16 md:py-24 bg-dki-900 text-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-12 gap-12 items-center">
-                <div class="lg:col-span-5">
-                    <span class="text-dki-orange font-bold text-sm tracking-widest uppercase mb-2 block">Hak Akses
+            <div class="grid lg:grid-cols-12 gap-10 md:gap-12 items-center">
+                <div class="lg:col-span-5 text-center lg:text-left">
+                    <span class="text-dki-orange font-bold text-xs sm:text-sm tracking-widest uppercase mb-2 block">Hak
+                        Akses
                         Sistem</span>
-                    <h2 class="text-3xl font-heading font-bold mb-6 leading-tight">Mendukung Seluruh<br>Hierarki
-                        Bapenda.</h2>
-                    <p class="text-slate-400 mb-8 leading-relaxed">UI/UX dashboard menyesuaikan *Role* login. Dari
+                    <h2 class="text-2xl sm:text-3xl font-heading font-bold mb-4 sm:mb-6 leading-tight">Mendukung
+                        Seluruh<br class="hidden sm:block">Hierarki
+                        Pemprov DKI.</h2>
+                    <p class="text-sm sm:text-base text-slate-400 mb-6 sm:mb-8 leading-relaxed">UI/UX dashboard
+                        menyesuaikan *Role* login. Dari
                         Kepala Badan yang membutuhkan rekapitulasi utuh, hingga staf yang butuh form input cepat.</p>
                 </div>
 
                 <div class="lg:col-span-7 grid sm:grid-cols-2 gap-4">
-                    <!-- Role Card 1 -->
-                    <div class="p-6 rounded-xl bg-white/5 border border-white/10">
+                    <div class="p-5 sm:p-6 rounded-xl bg-white/5 border border-white/10">
                         <div class="flex items-center gap-3 mb-4">
                             <div
-                                class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                                 <i class="fa-solid fa-users"></i>
                             </div>
-                            <h4 class="font-heading font-bold">ASN Pelaksana</h4>
+                            <h4 class="font-heading font-bold text-sm sm:text-base">ASN Pelaksana</h4>
                         </div>
-                        <ul class="space-y-2 text-sm text-slate-400">
-                            <li><i class="fa-solid fa-check text-emerald-500 mr-2 text-xs"></i> Pengisian LKH
+                        <ul class="space-y-2 text-xs sm:text-sm text-slate-400">
+                            <li class="flex items-start gap-2"><i
+                                    class="fa-solid fa-check text-emerald-500 mt-0.5 text-xs shrink-0"></i> Pengisian
+                                LKH
                                 (WFO/WFH/Luar)</li>
-                            <li><i class="fa-solid fa-check text-emerald-500 mr-2 text-xs"></i> Pantau jam kerja SKP
+                            <li class="flex items-start gap-2"><i
+                                    class="fa-solid fa-check text-emerald-500 mt-0.5 text-xs shrink-0"></i> Pantau jam
+                                kerja SKP
                                 personal</li>
                         </ul>
                     </div>
 
-                    <!-- Role Card 2 -->
-                    <div class="p-6 rounded-xl bg-white/5 border border-white/10">
+                    <div class="p-5 sm:p-6 rounded-xl bg-white/5 border border-white/10">
                         <div class="flex items-center gap-3 mb-4">
                             <div
-                                class="w-10 h-10 rounded-lg bg-dki-accent/20 flex items-center justify-center text-dki-accent">
+                                class="w-10 h-10 rounded-lg bg-dki-accent/20 flex items-center justify-center text-dki-accent shrink-0">
                                 <i class="fa-solid fa-user-tie"></i>
                             </div>
-                            <h4 class="font-heading font-bold">Pejabat Penilai (Kasi)</h4>
+                            <h4 class="font-heading font-bold text-sm sm:text-base">Pejabat Penilai (Kasi)</h4>
                         </div>
-                        <ul class="space-y-2 text-sm text-slate-400">
-                            <li><i class="fa-solid fa-check text-dki-accent mr-2 text-xs"></i> Verifikasi/Reject LKH
+                        <ul class="space-y-2 text-xs sm:text-sm text-slate-400">
+                            <li class="flex items-start gap-2"><i
+                                    class="fa-solid fa-check text-dki-accent mt-0.5 text-xs shrink-0"></i>
+                                Verifikasi/Reject LKH
                                 Bawahan</li>
-                            <li><i class="fa-solid fa-check text-dki-accent mr-2 text-xs"></i> Lacak koordinat anomali
+                            <li class="flex items-start gap-2"><i
+                                    class="fa-solid fa-check text-dki-accent mt-0.5 text-xs shrink-0"></i> Lacak
+                                koordinat anomali
                                 tim</li>
                         </ul>
                     </div>
 
-                    <!-- Role Card 3 (Full width) -->
-                    <div class="p-6 rounded-xl bg-dki-orange/10 border border-dki-orange/30 sm:col-span-2">
+                    <div class="p-5 sm:p-6 rounded-xl bg-dki-orange/10 border border-dki-orange/30 sm:col-span-2">
                         <div class="flex items-center gap-3 mb-4">
                             <div
-                                class="w-10 h-10 rounded-lg bg-dki-orange/30 flex items-center justify-center text-dki-orange">
+                                class="w-10 h-10 rounded-lg bg-dki-orange/30 flex items-center justify-center text-dki-orange shrink-0">
                                 <i class="fa-solid fa-building-columns"></i>
                             </div>
-                            <h4 class="font-heading font-bold">Pimpinan (Kaban / Kasuban)</h4>
+                            <h4 class="font-heading font-bold text-sm sm:text-base">Pimpinan (Kaban / Kasuban)</h4>
                         </div>
-                        <div class="grid sm:grid-cols-2 gap-2 text-sm text-slate-300">
-                            <div><i class="fa-solid fa-check text-dki-orange mr-2 text-xs"></i> Dashboard Analitik Makro
+                        <div class="grid sm:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-300">
+                            <div class="flex items-start gap-2"><i
+                                    class="fa-solid fa-check text-dki-orange mt-0.5 text-xs shrink-0"></i> Dashboard
+                                Analitik Makro
                             </div>
-                            <div><i class="fa-solid fa-check text-dki-orange mr-2 text-xs"></i> Broadscast Pengumuman
+                            <div class="flex items-start gap-2"><i
+                                    class="fa-solid fa-check text-dki-orange mt-0.5 text-xs shrink-0"></i> Broadscast
+                                Pengumuman
                                 Instansi</div>
                         </div>
                     </div>
@@ -388,27 +427,50 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-10 bg-[#0A0F1C] border-t border-slate-800">
+    <footer class="py-8 md:py-10 bg-[#0A0F1C] border-t border-slate-800">
         <div
-            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3 opacity-60">
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <div class="flex items-center justify-center md:justify-start gap-3 opacity-60">
                 <img src="./assets/img/dki.png" alt="Logo DKI" class="h-8 w-auto grayscale">
-                <div class="flex flex-col">
-                    <span class="text-sm font-heading font-bold text-slate-400">Badan Pendapatan Daerah</span>
-                    <span class="text-[10px] text-slate-500">Pemerintah Provinsi DKI Jakarta</span>
+                <div class="flex flex-col items-start">
+                    <span class="text-xs sm:text-sm font-heading font-bold text-slate-400">Badan Pendapatan
+                        Daerah</span>
+                    <span class="text-[9px] sm:text-[10px] text-slate-500">Pemerintah Provinsi DKI Jakarta</span>
                 </div>
             </div>
-            <p class="text-slate-600 text-sm font-medium">&copy; 2026 Pusdatin Bapenda DKI Jakarta.</p>
+            <p class="text-slate-600 text-xs sm:text-sm font-medium">&copy; 2026 Pusdatin Pemprov DKI Jakarta.</p>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="./assets/js/db-mock.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Menu Toggle Logic
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = mobileBtn.querySelector('i');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            function toggleMenu() {
+                mobileMenu.classList.toggle('hidden');
+                if (mobileMenu.classList.contains('hidden')) {
+                    menuIcon.classList.remove('fa-xmark');
+                    menuIcon.classList.add('fa-bars');
+                } else {
+                    menuIcon.classList.remove('fa-bars');
+                    menuIcon.classList.add('fa-xmark');
+                }
+            }
+
+            mobileBtn.addEventListener('click', toggleMenu);
+
+            // Close menu when a link is clicked
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', toggleMenu);
+            });
+
             // Inisialisasi Peta Leaflet (Fokus di Balaikota / Monas Jakarta)
             const map = L.map('osm-map', { zoomControl: false }).setView([-6.1824, 106.8291], 11);
             L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -417,6 +479,11 @@
                 attribution: '&copy; OpenStreetMap contributors',
                 maxZoom: 19
             }).addTo(map);
+
+            // Perbaiki issue ukuran Leaflet di kontainer responsif
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 300);
 
             // Fetch Data dari db-mock.js (MockDB DKI)
             if (typeof MockDB !== 'undefined') {

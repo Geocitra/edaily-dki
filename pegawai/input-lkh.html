@@ -69,7 +69,6 @@
         class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"
         onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR TETAP (TIDAK DIUBAH) -->
     <aside id="sidebar"
         class="fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 w-64 bg-dki-dark flex flex-col shadow-2xl z-50 flex-shrink-0 transition-transform duration-300 ease-in-out h-full">
         <div class="p-6 border-b border-white/10 flex flex-col items-center text-center relative shrink-0">
@@ -228,12 +227,12 @@
                                 required>
                                 <option value="WFO">🏢 WFO (KANTOR)</option>
                                 <option value="WFH">🏠 WFH (DOMISILI)</option>
+                                <option value="WFA">🌍 WFA (WORK FROM ANYWHERE)</option>
                                 <option value="LUAR">🗺️ DINAS LUAR (LAPANGAN)</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- SEKSI GPS BARU (ANTI-MANIPULASI) -->
                     <div class="space-y-2">
                         <label
                             class="text-[10px] md:text-xs font-black text-slate-600 uppercase tracking-widest ml-1">Validasi
@@ -262,7 +261,6 @@
         </div>
     </main>
 
-    <!-- Modal Peta Preview (View-Only) -->
     <div class="modal-overlay" id="modal-peta">
         <div
             class="bg-white w-[95%] sm:w-[90%] max-w-3xl rounded-3xl md:rounded-[40px] overflow-hidden shadow-2xl flex flex-col h-[70vh] md:h-[500px] border-4 border-white animate-fade-in-up">

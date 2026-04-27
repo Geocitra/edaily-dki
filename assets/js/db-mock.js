@@ -10,7 +10,7 @@ const MockDB = {
     DB_KEY: 'edaily_database_jakarta',
 
     seedData: {
-        // Master Bidang di Bapenda DKI Jakarta (Struktur lebih luas)
+        // Master Bidang di Pemprov DKI Jakarta (Struktur lebih luas)
         bidang: [
             { id: "B00", nama: "Kepala Badan Pendapatan Daerah" },
             { id: "B01", nama: "Pusat Data dan Informasi Pendapatan (Pusdatin)" },
@@ -52,7 +52,7 @@ const MockDB = {
             { id: "U18", username: "anton.hotel", name: "Anton Wijaya (Pengawas Pajak Hotel)", role: "PEGAWAI", bidang_id: "B04", manager_id: "U16" },
 
             // ADMIN SISTEM
-            { id: "U10", username: "admin.it", name: "Admin IT Bapenda", role: "ADMIN", bidang_id: null, manager_id: null }
+            { id: "U10", username: "admin.it", name: "Admin IT Pemprov DKI", role: "ADMIN", bidang_id: null, manager_id: null }
         ],
 
         skp: [
@@ -104,6 +104,13 @@ const MockDB = {
                 lokasi_mode: "WFO", lat: -6.1824, lng: 106.8295,
                 waktu_menit: 400, status: "APPROVED", tanggal: "2026-04-19T18:00:00",
                 feedback: "Pastikan SOP keamanan siber diterapkan ketat."
+            },
+            {
+                id: "LKH-IT-005", user_id: "U06", skp_id: "SKP-IT-01",
+                aktivitas: "Refactoring arsitektur backend dan code review modul API secara remote (Work From Anywhere).",
+                lokasi_mode: "WFA", lat: -6.8322, lng: 107.6206, // Area Punclut
+                waktu_menit: 240, status: "APPROVED", tanggal: "2026-04-23T11:00:00",
+                feedback: "Perubahan struktur kode sangat bersih. Komunikasi tim tetap lancar meski sedang remote."
             },
 
             // --- KELOMPOK LAPANGAN JAKSEL (OPS) ---
@@ -205,7 +212,7 @@ const MockDB = {
         ],
 
         activity_logs: [
-            { id: "L-01", user_id: "U10", action: "DB_SEED", desc: "Sistem Induk E-Daily Report Bapenda DKI Jakarta berhasil diinisialisasi.", timestamp: "2026-04-01T00:00:00" },
+            { id: "L-01", user_id: "U10", action: "DB_SEED", desc: "Sistem Induk E-Daily Report Pemprov DKI Jakarta berhasil diinisialisasi.", timestamp: "2026-04-01T00:00:00" },
             { id: "L-02", user_id: "U04", action: "APPROVE_LKH", desc: "Memvalidasi LKH Naufal (Fixing bugs endpoint Bank DKI).", timestamp: "2026-04-18T17:15:00" },
             { id: "L-03", user_id: "U05", action: "REJECT_LKH", desc: "Menolak LKH Maria (Anomali GPS terdeteksi di Depok).", timestamp: "2026-04-20T11:00:00" },
             { id: "L-04", user_id: "U01", action: "BROADCAST", desc: "Menerbitkan instruksi pimpinan: Percepatan Target Pajak Triwulan II.", timestamp: "2026-04-15T08:05:00" },
